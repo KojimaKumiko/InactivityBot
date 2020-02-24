@@ -45,6 +45,8 @@ namespace InactivityBot
                 return;
             }
 
+            await services.GetRequiredService<InactivityService>().LoadJson(InactivityService.inactivityFileName);
+
             await client.LoginAsync(TokenType.Bot, config.Token);
             await client.StartAsync();
 

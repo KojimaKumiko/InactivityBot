@@ -3,19 +3,93 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Discord;
+using System.Linq;
 
 namespace InactivityBot.Modules
 {
     public class BaseModule : ModuleBase<SocketCommandContext>
     {
-        [Command("ping")]
-        [Alias("pong", "hello")]
-        public Task PingAsync() => ReplyAsync("pong!");
+        public CommandService CommandService { get; set; }
+
+        public IServiceProvider Services { get; set; }
 
         [Command("Help")]
-        public Task Help()
+        [Summary("Returns information about all executable commands.")]
+        public async Task Help()
         {
-            return ReplyAsync("There is currently no help, I'm vewy sowwy :c");
+            var executableCommands = await CommandService.GetExecutableCommandsAsync(Context, Services);
+            List<string> alreadyListed = new List<string>();
+
+            var embedBuilder = new EmbedBuilder
+            {
+                Title = "Help!",
+                Timestamp = DateTime.Now,
+                Color = Color.Blue,
+                Description = "Lists all executable commands for the current user! Specify a command to get more information about the command!"
+            };
+
+            var applicationInfo = await Context.Client.GetApplicationInfoAsync();
+            embedBuilder.WithAuthor(applicationInfo.Owner);
+
+            foreach (var command in executableCommands)
+            {
+                if (alreadyListed.Contains(command.Name))
+                {
+                    continue;
+                }
+
+                embedBuilder.AddField(command.Name, command.Summary != null ? command.Summary : "No summary available.");
+
+                alreadyListed.Add(command.Name);
+            }
+
+            await ReplyAsync(null, false, embedBuilder.Build());
+        }
+
+        [Command("Help")]
+        [Summary("Returns information about all executable commands.")]
+        public async Task Help(string commandName)
+        {
+            var executableCommands = await CommandService.GetExecutableCommandsAsync(Context, Services);
+
+            var commands = executableCommands.Where(c => c.Name.Equals(commandName, StringComparison.InvariantCultureIgnoreCase)).ToList();
+
+            if (commands.Count > 0)
+            {
+                var embedBuilder = new EmbedBuilder
+                {
+                    Title = "Help!",
+                    Timestamp = DateTime.Now,
+                    Color = Color.Blue
+                };
+
+                var applicationInfo = await Context.Client.GetApplicationInfoAsync();
+                embedBuilder.WithAuthor(applicationInfo.Owner);
+
+                embedBuilder
+                    .WithDescription($"`{commands.First().Name}`: {commands.First().Summary}")
+                    .AddField("Aliases", string.Join(", ", commands.First().Aliases));
+
+                foreach (var command in commands)
+                {
+                    string parameterValue = string.Empty;
+                    foreach (var parameter in command.Parameters)
+                    {
+                        string summary = string.IsNullOrWhiteSpace(parameter.Summary) ? "No summary available" : parameter.Summary;
+                        parameterValue += $"`{parameter.Name}`: {summary}; Optional: {parameter.IsOptional}\n";
+                    }
+
+                    parameterValue = string.IsNullOrWhiteSpace(parameterValue) ? "The command has no parameters." : parameterValue;
+                    embedBuilder.AddField("Parameters", parameterValue);
+                }
+
+                await ReplyAsync(null, false, embedBuilder.Build());
+            }
+            else
+            {
+                await ReplyAsync("The requested command was not found.");
+            }
         }
     }
 }

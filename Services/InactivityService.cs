@@ -21,6 +21,8 @@ namespace InactivityBot.Services
             GuildInactivityMessage = new Dictionary<ulong, ulong>();
         }
 
+        // TODO: Fix circular reference loop.
+
         /// <summary>
         /// Gets the culture for a given guild.
         /// </summary>
@@ -63,33 +65,28 @@ namespace InactivityBot.Services
         public const string inactivityFileName = "inactivity.json";
 
         /// <summary>
-        /// Gets or sets the cached Inactivity Service.
-        /// </summary>
-        private InactivityService Inactivity { get; set; }
-
-        /// <summary>
-        /// Loads a json file by the given file name and returns an Inactivity Model.
+        /// Loads a json file by the given file name.
         /// </summary>
         /// <param name="fileName">The file to load.</param>
-        /// <param name="loadFresh">Whether or not to load the file or use the cache.</param>
-        /// <returns>The Inactivity Model or null if not existing.</returns>
-        public async Task<InactivityService> SaveJson(string fileName, bool loadFresh = false)
+        /// <returns>The Task to await.</returns>
+        public async Task LoadJson(string fileName)
         {
-            if (Inactivity != null && !loadFresh)
-            {
-                return Inactivity;
-            }
-
             if (File.Exists(fileName))
             {
                 using var sr = new StreamReader(fileName);
-                Inactivity = JsonConvert.DeserializeObject<InactivityService>(await sr.ReadToEndAsync());
-                return Inactivity;
+                var model = JsonConvert.DeserializeObject<InactivityService>(await sr.ReadToEndAsync());
+
+                GuildCulture = model.GuildCulture;
+                GuildDestinationChannel = model.GuildDestinationChannel;
+                GuildInactiveEmoji = model.GuildInactiveEmoji;
+                GuildInactivityMessage = model.GuildInactivityMessage;
+                GuildInactivityRole = model.GuildInactivityRole;
+                GuildActiveEmoji = model.GuildActiveEmoji;
             }
-
-            await SaveJson(fileName);
-
-            return null;
+            else
+            {
+                await SaveJson(fileName);
+            }
         }
 
         /// <summary>

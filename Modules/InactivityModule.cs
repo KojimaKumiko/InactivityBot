@@ -16,10 +16,8 @@ namespace InactivityBot
     {
         public InactivityService InactivityModel { get; set; }
 
-        [Command("Echo")]
-        public Task EchoAsync([Remainder] string message) => ReplyAsync(message);
-
         [Command("inactivity")]
+        [Summary("Sends a message with reactions and reacts to them.")]
         public async Task InactivityAsync()
         {
             await Context.Channel.TriggerTypingAsync();
@@ -76,6 +74,7 @@ namespace InactivityBot
 
         [Command("setLanguage")]
         [Alias("language", "culture")]
+        [Summary("Changes the language of the Bot for the Guild. Use \"en-us\" for English or \"de-de\" for German")]
         public Task SetLanguageAsync(string locale)
         {
             return NotImplemented();
@@ -83,6 +82,7 @@ namespace InactivityBot
 
         [Command("setChannel")]
         [Alias("channel", "destinationChannel", "setDestinationChannel")]
+        [Summary("Sets the channel where the bot will write the information about a User wanting to become inactive. Can be specified by pinging/referencing the channel with a # or by writing the name of it.")]
         public async Task SetChannelAsync(ITextChannel channel)
         {
             await Context.Channel.TriggerTypingAsync();
@@ -102,12 +102,15 @@ namespace InactivityBot
                 InactivityModel.GuildDestinationChannel.Add(channel.GuildId, channel);
             }
 
+            await InactivityModel.SaveJson(InactivityService.inactivityFileName);
+
             await ReplyAsync("Succesfully set the destination channel!");
             return;
         }
 
         [Command("setRole")]
         [Alias("role", "inactiveRole", "setInactiveRole")]
+        [Summary("Sets the role the bot will take away from an inactive user that wants to become active again. Can be specified by pinging the role or writing it's name.")]
         public async Task SetInactiveRole(IRole role)
         {
             await Context.Channel.TriggerTypingAsync();
@@ -127,12 +130,15 @@ namespace InactivityBot
                 InactivityModel.GuildInactivityRole.Add(Context.Guild.Id, role);
             }
 
+            await InactivityModel.SaveJson(InactivityService.inactivityFileName);
+
             await ReplyAsync("Successfully set the inactive role!");
             return;
         }
 
         [Command("setRole")]
         [Alias("role", "inactiveRole", "setInactiveRole")]
+        [Summary("Sets the role the bot will take away from an inactive user that wants to become active again. Can be specified by pinging the role or writing it's name.")]
         public async Task SetInactiveRole([Remainder] string role)
         {
             await Context.Channel.TriggerTypingAsync();
@@ -159,6 +165,8 @@ namespace InactivityBot
             {
                 InactivityModel.GuildInactivityRole.Add(Context.Guild.Id, guildRole);
             }
+
+            await InactivityModel.SaveJson(InactivityService.inactivityFileName);
 
             await ReplyAsync("Successfully set the inactive role!");
             return;
