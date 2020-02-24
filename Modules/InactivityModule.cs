@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace InactivityBot
@@ -204,8 +205,31 @@ namespace InactivityBot
                             {
                                 var dmChannel = await user.GetOrCreateDMChannelAsync().ConfigureAwait(false);
 
+                                SocketMessage accountName = null;
                                 await dmChannel.SendMessageAsync("Your Guild Wars 2 account name");
-                                var accountName = await GetNextMessage(user).ConfigureAwait(false);
+                                bool regexMatch = false;
+
+                                do
+                                {
+                                    if (accountName != null)
+                                    {
+                                        await dmChannel.SendMessageAsync("Please also specifiy the last 4 digits of your GW2 account name!");
+                                    }
+
+                                    accountName = await GetNextMessage(user).ConfigureAwait(false);
+
+                                    if (accountName != null)
+                                    {
+                                        regexMatch = Regex.IsMatch(accountName.Content, @"\.\d{4}$");
+                                    }
+                                }
+                                while (accountName != null && !regexMatch);
+
+                                if (accountName == null)
+                                {
+                                    await dmChannel.SendMessageAsync("Time out!");
+                                    return;
+                                }
 
                                 await dmChannel.SendMessageAsync("How long will you be inactive/paused (please specifiy with a date)?");
                                 var inactivityPeriod = await GetNextMessage(user).ConfigureAwait(false);
