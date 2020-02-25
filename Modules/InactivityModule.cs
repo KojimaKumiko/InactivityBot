@@ -1,9 +1,11 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using InactivityBot.Ressources;
 using InactivityBot.Services;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -20,22 +22,24 @@ namespace InactivityBot
         [Summary("Sends a message with reactions and reacts to them.")]
         public async Task InactivityAsync()
         {
+            CultureInfo culture = GetGuildCulture(Context.Guild);
+
             await Context.Channel.TriggerTypingAsync();
 
             await Context.Message.DeleteAsync();
 
             ulong guildId = Context.Guild.Id;
             InactivityModel.GuildDestinationChannel.TryGetValue(guildId, out var destChannel);
-            if (destChannel == null)
+            if (destChannel > 0)
             {
-                await ReplyAsync("No destination channel is specified. Please make sure to specifiy one, using the command !setChannel.");
+                await ReplyAsync(Inactivity.Inactivity_MissingChannel);
                 return;
             }
 
             InactivityModel.GuildInactivityRole.TryGetValue(guildId, out var role);
-            if (role == null)
+            if (role > 0)
             {
-                await ReplyAsync("No inactivity role is specified. Please make sure to specifiy one, using the command !setRole.");
+                await ReplyAsync(Inactivity.Inactivity_MissingRole);
                 return;
             }
 
@@ -54,7 +58,7 @@ namespace InactivityBot
                 InactivityModel.GuildInactiveEmoji.Add(guildId, inactiveEmoji);
             }
 
-            var message = await ReplyAsync($"React with {inactiveEmoji} to be inactiv or {activeEmoji} to be active again!");
+            var message = await ReplyAsync(string.Format(culture, Inactivity.Inactivity_Message, inactiveEmoji, activeEmoji));
             await message.AddReactionsAsync(new[] { inactiveEmoji, activeEmoji });
 
             if (InactivityModel.GuildInactivityMessage.ContainsKey(guildId))
@@ -75,9 +79,39 @@ namespace InactivityBot
         [Command("setLanguage")]
         [Alias("language", "culture")]
         [Summary("Changes the language of the Bot for the Guild. Use \"en-us\" for English or \"de-de\" for German")]
-        public Task SetLanguageAsync(string locale)
+        public async Task SetLanguageAsync(string locale)
         {
-            return NotImplemented();
+            CultureInfo culture = GetGuildCulture(Context.Guild);
+
+            if (string.IsNullOrWhiteSpace(locale))
+            {
+                await ReplyAsync(Inactivity.SetLanguage_NoLocale);
+                return;
+            }
+
+            if (!locale.Equals("en-US", StringComparison.InvariantCultureIgnoreCase) && !locale.Equals("en", StringComparison.InvariantCultureIgnoreCase)
+                && !locale.Equals("de-DE", StringComparison.InvariantCultureIgnoreCase) && !locale.Equals("de", StringComparison.InvariantCultureIgnoreCase))
+            {
+                await ReplyAsync(Inactivity.SetLanguage_NotSupported);
+                return;
+            }
+
+            culture = new CultureInfo(locale);
+            CultureInfo.CurrentCulture = culture;
+            CultureInfo.CurrentUICulture = culture;
+
+            if (InactivityModel.GuildCulture.ContainsKey(Context.Guild.Id))
+            {
+                InactivityModel.GuildCulture[Context.Guild.Id] = culture;
+            }
+            else
+            {
+                InactivityModel.GuildCulture.Add(Context.Guild.Id, culture);
+            }
+
+            await InactivityModel.SaveJson(InactivityService.inactivityFileName);
+
+            await ReplyAsync(Inactivity.SetLanguage_Success);
         }
 
         [Command("setChannel")]
@@ -85,26 +119,28 @@ namespace InactivityBot
         [Summary("Sets the channel where the bot will write the information about a User wanting to become inactive. Can be specified by pinging/referencing the channel with a # or by writing the name of it.")]
         public async Task SetChannelAsync(ITextChannel channel)
         {
+            GetGuildCulture(Context.Guild);
+
             await Context.Channel.TriggerTypingAsync();
 
             if (channel == null)
             {
-                await ReplyAsync("Please provide a channel by referencing it with # and the channel name. e.g. #inactivity");
+                await ReplyAsync(Inactivity.SetChannel_NoChannel);
                 return;
             }
 
             if (InactivityModel.GuildDestinationChannel.ContainsKey(channel.GuildId))
             {
-                InactivityModel.GuildDestinationChannel[channel.GuildId] = channel;
+                InactivityModel.GuildDestinationChannel[channel.GuildId] = channel.Id;
             }
             else
             {
-                InactivityModel.GuildDestinationChannel.Add(channel.GuildId, channel);
+                InactivityModel.GuildDestinationChannel.Add(channel.GuildId, channel.Id);
             }
 
             await InactivityModel.SaveJson(InactivityService.inactivityFileName);
 
-            await ReplyAsync("Succesfully set the destination channel!");
+            await ReplyAsync(Inactivity.SetChannel_Success);
             return;
         }
 
@@ -113,26 +149,28 @@ namespace InactivityBot
         [Summary("Sets the role the bot will take away from an inactive user that wants to become active again. Can be specified by pinging the role or writing it's name.")]
         public async Task SetInactiveRole(IRole role)
         {
+            GetGuildCulture(Context.Guild);
+
             await Context.Channel.TriggerTypingAsync();
 
             if (role == null)
             {
-                await ReplyAsync("Please specify a role by referencing it with an @. e.g. @inactive, @admin, ...");
+                await ReplyAsync(Inactivity.SetRole_NoRole);
                 return;
             }
 
             if (InactivityModel.GuildInactivityRole.ContainsKey(Context.Guild.Id))
             {
-                InactivityModel.GuildInactivityRole[Context.Guild.Id] = role;
+                InactivityModel.GuildInactivityRole[Context.Guild.Id] = role.Id;
             }
             else
             {
-                InactivityModel.GuildInactivityRole.Add(Context.Guild.Id, role);
+                InactivityModel.GuildInactivityRole.Add(Context.Guild.Id, role.Id);
             }
 
             await InactivityModel.SaveJson(InactivityService.inactivityFileName);
 
-            await ReplyAsync("Successfully set the inactive role!");
+            await ReplyAsync(Inactivity.SetRole_Success);
             return;
         }
 
@@ -141,11 +179,13 @@ namespace InactivityBot
         [Summary("Sets the role the bot will take away from an inactive user that wants to become active again. Can be specified by pinging the role or writing it's name.")]
         public async Task SetInactiveRole([Remainder] string role)
         {
+            GetGuildCulture(Context.Guild);
+
             await Context.Channel.TriggerTypingAsync();
 
             if (string.IsNullOrWhiteSpace(role))
             {
-                await ReplyAsync("Please specify a role by it's name. e.g. inactive, admin, ...");
+                await ReplyAsync(Inactivity.SetRole_NoRole);
                 return;
             }
 
@@ -153,27 +193,70 @@ namespace InactivityBot
 
             if (guildRole == null)
             {
-                await ReplyAsync("Could not find the specified role. Please make sure that the name is correct and it exists.");
+                await ReplyAsync(Inactivity.SetRole_RoleNotFound);
                 return;
             }
 
             if (InactivityModel.GuildInactivityRole.ContainsKey(Context.Guild.Id))
             {
-                InactivityModel.GuildInactivityRole[Context.Guild.Id] = guildRole;
+                InactivityModel.GuildInactivityRole[Context.Guild.Id] = guildRole.Id;
             }
             else
             {
-                InactivityModel.GuildInactivityRole.Add(Context.Guild.Id, guildRole);
+                InactivityModel.GuildInactivityRole.Add(Context.Guild.Id, guildRole.Id);
             }
 
             await InactivityModel.SaveJson(InactivityService.inactivityFileName);
 
-            await ReplyAsync("Successfully set the inactive role!");
+            await ReplyAsync(Inactivity.SetRole_Success);
             return;
+        }
+
+        [Command("cancel")]
+        [Alias("cancelInactivity")]
+        [Summary("Cancels the ongoing inactivity reaction check and deletes the associated message")]
+        public async Task CancleInactivityReaction()
+        {
+            GetGuildCulture(Context.Guild);
+
+            await Context.Channel.TriggerTypingAsync();
+
+            Context.Client.ReactionAdded -= ReactionAdded;
+
+            InactivityModel.GuildInactivityMessage.TryGetValue(Context.Guild.Id, out ulong messageId);
+
+            if (messageId > 0)
+            {
+                foreach (var channel in Context.Guild.TextChannels)
+                {
+                    var botUser = Context.Guild.GetUser(Context.Client.CurrentUser.Id);
+                    var channelPermissions = botUser.GetPermissions(channel);
+                    if (channelPermissions.ReadMessageHistory && channelPermissions.ManageMessages)
+                    {
+                        var message = await channel.GetMessageAsync(messageId);
+                        if (message == null)
+                        {
+                            continue;
+                        }
+
+                        await message.DeleteAsync();
+
+                        await ReplyAsync(Inactivity.Cancel_Success);
+                        return;
+                    }
+                }
+
+                await ReplyAsync(Inactivity.Cancel_MissingPermissions);
+                return;
+            }
+
+            await ReplyAsync(Inactivity.Cancel_MessageNotFound);
         }
 
         private async Task ReactionAdded(Cacheable<IUserMessage, ulong> cachedMessage, ISocketMessageChannel channel, SocketReaction reaction)
         {
+            CultureInfo culture = GetGuildCulture(Context.Guild);
+
             // Get the message where the reaction was added.
             var message = await cachedMessage.GetOrDownloadAsync();
             if (message != null)
@@ -209,19 +292,21 @@ namespace InactivityBot
                             InactivityModel.GuildInactiveEmoji.TryGetValue(guildId, out var inactiveEmoji);
                             InactivityModel.GuildActiveEmoji.TryGetValue(guildId, out var activeEmoji);
 
+                            var guildUser = user as IGuildUser;
+
                             if (emoji.Name == inactiveEmoji.Name)
                             {
                                 var dmChannel = await user.GetOrCreateDMChannelAsync().ConfigureAwait(false);
 
                                 SocketMessage accountName = null;
-                                await dmChannel.SendMessageAsync("Your Guild Wars 2 account name");
+                                await dmChannel.SendMessageAsync(Inactivity.Inactivity_AccountName);
                                 bool regexMatch = false;
 
                                 do
                                 {
                                     if (accountName != null)
                                     {
-                                        await dmChannel.SendMessageAsync("Please also specifiy the last 4 digits of your GW2 account name!");
+                                        await dmChannel.SendMessageAsync(Inactivity.Inactivity_AccountName_DigitsMissing);
                                     }
 
                                     accountName = await GetNextMessage(user).ConfigureAwait(false);
@@ -239,33 +324,34 @@ namespace InactivityBot
                                     return;
                                 }
 
-                                await dmChannel.SendMessageAsync("How long will you be inactive/paused (please specifiy with a date)?");
+                                await dmChannel.SendMessageAsync(Inactivity.Inactivity_Duration);
                                 var inactivityPeriod = await GetNextMessage(user).ConfigureAwait(false);
 
-                                await dmChannel.SendMessageAsync("Please state the reason, as to why you are pausing");
+                                await dmChannel.SendMessageAsync(Inactivity.Inactivity_Reason);
                                 var reason = await GetNextMessage(user).ConfigureAwait(false);
 
-                                InactivityModel.GuildDestinationChannel.TryGetValue(guildId, out var channel);
-                                if (channel != null)
+                                InactivityModel.GuildDestinationChannel.TryGetValue(guildId, out var channelId);
+                                if (await guildUser.Guild.GetChannelAsync(channelId) is ITextChannel channel)
                                 {
-                                    await channel.SendMessageAsync($"Discord name: {user.Mention}\nAccount name: {accountName.Content}\nPeriod: {inactivityPeriod.Content}\nReason: {reason.Content}")
+                                    // Change to be a Rich Embed.
+                                    await channel.SendMessageAsync(string.Format(culture, Inactivity.Inactivity_FinalMessage, user.Mention, accountName.Content, inactivityPeriod.Content, reason.Content))
                                         .ConfigureAwait(false);
                                 }
                             }
-                            else if (emoji == activeEmoji)
+                            else if (emoji.Name == activeEmoji.Name)
                             {
-                                var guildUser = user as IGuildUser;
-                                InactivityModel.GuildInactivityRole.TryGetValue(guildId, out var role);
-                                InactivityModel.GuildDestinationChannel.TryGetValue(guildId, out var channel);
+                                InactivityModel.GuildInactivityRole.TryGetValue(guildId, out var roleId);
+                                InactivityModel.GuildDestinationChannel.TryGetValue(guildId, out var channelId);
 
-                                if (role != null && guildUser.RoleIds.Contains(role.Id))
+                                if (roleId > 0 && guildUser.RoleIds.Contains(roleId))
                                 {
+                                    var role = guildUser.Guild.Roles.Single(r => r.Id == roleId);
                                     await guildUser.RemoveRoleAsync(role).ConfigureAwait(false);
-                                    await guildUser.SendMessageAsync("You are no longer inactive!").ConfigureAwait(false);
+                                    await guildUser.SendMessageAsync(Inactivity.Inactivity_Active).ConfigureAwait(false);
 
-                                    if (channel != null)
+                                    if (await guildUser.Guild.GetChannelAsync(channelId) is ITextChannel channel)
                                     {
-                                        await channel.SendMessageAsync($"{guildUser.Mention} is no longer inactive!").ConfigureAwait(false);
+                                        await channel.SendMessageAsync(string.Format(culture, Inactivity.Inactivity_Active_Lead, user.Mention)).ConfigureAwait(false);
                                     }
                                 }
                             }
@@ -306,6 +392,26 @@ namespace InactivityBot
             Context.Client.MessageReceived -= Func;
 
             return task == source ? await source : null;
+        }
+
+        private CultureInfo GetGuildCulture(SocketGuild guild)
+        {
+            CultureInfo culture;
+
+            if (!InactivityModel.GuildCulture.ContainsKey(guild.Id))
+            {
+                // in case the guild/server has no Culture defined or the method was called in dm's, return en-US as default culture.
+                culture = new CultureInfo("en-US");
+            }
+            else
+            {
+                culture = InactivityModel.GuildCulture[guild.Id];
+            }
+
+            CultureInfo.CurrentCulture = culture;
+            CultureInfo.CurrentUICulture = culture;
+
+            return culture;
         }
 
         private Task NotImplemented() => ReplyAsync("I'm vewwy sowwy but this command is currently not yet implemented :c");

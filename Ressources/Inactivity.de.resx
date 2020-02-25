@@ -1,0 +1,204 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Cancel_MessageNotFound" xml:space="preserve">
+    <value>Reaktionen erfolgreich beendet aber die zu löschende Nachricht konnte nicht gefunden werden.</value>
+    <comment>Successfully canceled the reaction event, but could not find the message to delete.</comment>
+  </data>
+  <data name="Cancel_MissingPermissions" xml:space="preserve">
+    <value>Reaktionen erfolgreich beendet aber die Nachricht konnte nicht gelöscht werden aufgrund fehlender Rechte.</value>
+    <comment>Successfully canceled the reaction event, but could not delete the message because of missing permissions.</comment>
+  </data>
+  <data name="Cancel_Success" xml:space="preserve">
+    <value>Reaktionen erfolgreich beendet und die Nachricht gelöscht!</value>
+    <comment>Successfully canceled and deleted the message.</comment>
+  </data>
+  <data name="Inactivity_AccountName" xml:space="preserve">
+    <value>Dein Guild Wars 2 Account Name</value>
+    <comment>Your Guild Wars 2 account name</comment>
+  </data>
+  <data name="Inactivity_AccountName_DigitsMissing" xml:space="preserve">
+    <value>Bitte geb auch die letzten 4 Ziffern deines GW2 Account Namens an!</value>
+    <comment>Please also specifiy the last 4 digits of your GW2 account name!</comment>
+  </data>
+  <data name="Inactivity_Active" xml:space="preserve">
+    <value>Du bist nicht mehr Inaktiv!</value>
+    <comment>You are no longer inactive!</comment>
+  </data>
+  <data name="Inactivity_Active_Lead" xml:space="preserve">
+    <value>{0} ist nicht mehr Inaktiv!</value>
+    <comment>{0} is no longer inactive!</comment>
+  </data>
+  <data name="Inactivity_Duration" xml:space="preserve">
+    <value>Wie lange möchtest du pausieren (bitte ein Datum angeben)?</value>
+    <comment>How long will you be inactive/paused (please specifiy with a date)?</comment>
+  </data>
+  <data name="Inactivity_FinalMessage" xml:space="preserve">
+    <value>Discord Name: {0}\nAccount Name: {1}\nDauer: {2}\nGrund: {3}</value>
+    <comment>Discord name: {0}\nAccount name: {1}\nPeriod: {2}\nReason: {3}</comment>
+  </data>
+  <data name="Inactivity_Message" xml:space="preserve">
+    <value>Reagiere mit {0} um dich Inaktiv zu melden oder mit {1} um wieder Aktiv zu werden!</value>
+    <comment>React with {0} to be inactiv or {1} to be active again!</comment>
+  </data>
+  <data name="Inactivity_MissingChannel" xml:space="preserve">
+    <value>Kein Ziel-Channel angegeben. Bitte gebe einen an mit dem Kommand !setChannel</value>
+    <comment>No destination channel is specified. Please make sure to specifiy one, using the command !setChannel</comment>
+  </data>
+  <data name="Inactivity_MissingRole" xml:space="preserve">
+    <value>Keine Inaktivitäts-Rolle angegeben. Bitte gebe eine an mit dem Kommand !setRole</value>
+    <comment>No inactivity role is specified. Please make sure to specifiy one, using the command !setRole</comment>
+  </data>
+  <data name="Inactivity_Reason" xml:space="preserve">
+    <value>Bitte geb den Grund an, warum du pausierst</value>
+    <comment>Please state the reason, as to why you are pausing</comment>
+  </data>
+  <data name="SetChannel_NoChannel" xml:space="preserve">
+    <value>Bitte gebe einen Channel an in dem du diesen mit einem # referenzierst z.B. #inaktiv</value>
+    <comment>Please provide a channel by referencing it with # and the channel name. e.g. #inactivity</comment>
+  </data>
+  <data name="SetChannel_Success" xml:space="preserve">
+    <value>Ziel-Channel erfolgreich gesetzt!</value>
+    <comment>Succesfully set the destination channel!</comment>
+  </data>
+  <data name="SetLanguage_NoLocale" xml:space="preserve">
+    <value>Kein Sprach-Code wurde angegeben. Bitte gebe entweder "en-US" für Englisch oder "de-DE" für Deutsch an!</value>
+    <comment>No Language code was provided. Please specify either "en-US" for English or "de-DE" for German!</comment>
+  </data>
+  <data name="SetLanguage_NotSupported" xml:space="preserve">
+    <value>Der angegebene Sprach-Code ist entweder falsch, oder wird nicht unterstützt. Bitte gebe entweder "en-US" für Englisch oder "de-DE" für Deutsch an.</value>
+    <comment>The provided Language code was wrong or is currently not supported. Either use "en-US" for English or "de-DE" for German.</comment>
+  </data>
+  <data name="SetLanguage_Success" xml:space="preserve">
+    <value>Sprache erfolgreich gewechselt!</value>
+    <comment>Successfully changed language!</comment>
+  </data>
+  <data name="SetRole_NoRole" xml:space="preserve">
+    <value>Bitte gebe eine Rolle an in dem du diese mit einem @ referenzierst oder den Namen angibst. z.B. @inaktiv, @admin, Rolle mit langem namen, ...</value>
+    <comment>Please specify a role by referencing it with an @. e.g. @inactive, @admin, ...</comment>
+  </data>
+  <data name="SetRole_RoleNotFound" xml:space="preserve">
+    <value>Die angegebene Rolle konnte nicht gefunden werden. Bitte vergewissere dich das der Name richtig ist und die Rolle existiert.</value>
+    <comment>Could not find the specified role. Please make sure that the name is correct and it exists.</comment>
+  </data>
+  <data name="SetRole_Success" xml:space="preserve">
+    <value>Inaktivitäts-Rolle erfolgreich gesetzt!</value>
+    <comment>Successfully set the inactive role!</comment>
+  </data>
+</root>

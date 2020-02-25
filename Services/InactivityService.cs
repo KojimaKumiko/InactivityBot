@@ -14,8 +14,8 @@ namespace InactivityBot.Services
         public InactivityService()
         {
             GuildCulture = new Dictionary<ulong, CultureInfo>();
-            GuildInactivityRole = new Dictionary<ulong, IRole>();
-            GuildDestinationChannel = new Dictionary<ulong, ITextChannel>();
+            GuildInactivityRole = new Dictionary<ulong, ulong>();
+            GuildDestinationChannel = new Dictionary<ulong, ulong>();
             GuildActiveEmoji = new Dictionary<ulong, Emoji>();
             GuildInactiveEmoji = new Dictionary<ulong, Emoji>();
             GuildInactivityMessage = new Dictionary<ulong, ulong>();
@@ -33,13 +33,13 @@ namespace InactivityBot.Services
         /// Gets the inactive role for a given guild.
         /// </summary>
         [JsonProperty]
-        public IDictionary<ulong, IRole> GuildInactivityRole { get; private set; }
+        public IDictionary<ulong, ulong> GuildInactivityRole { get; private set; }
 
         /// <summary>
         /// Gets the destination channel, where the bot will write the notifaction about a new inactivity, for a given guild.
         /// </summary>
         [JsonProperty]
-        public IDictionary<ulong, ITextChannel> GuildDestinationChannel { get; private set; }
+        public IDictionary<ulong, ulong> GuildDestinationChannel { get; private set; }
 
         /// <summary>
         /// Gets the active emoji for the Inactivity Message.
@@ -76,12 +76,15 @@ namespace InactivityBot.Services
                 using var sr = new StreamReader(fileName);
                 var model = JsonConvert.DeserializeObject<InactivityService>(await sr.ReadToEndAsync());
 
-                GuildCulture = model.GuildCulture;
-                GuildDestinationChannel = model.GuildDestinationChannel;
-                GuildInactiveEmoji = model.GuildInactiveEmoji;
-                GuildInactivityMessage = model.GuildInactivityMessage;
-                GuildInactivityRole = model.GuildInactivityRole;
-                GuildActiveEmoji = model.GuildActiveEmoji;
+                if (model != null)
+                {
+                    GuildCulture = model.GuildCulture;
+                    GuildDestinationChannel = model.GuildDestinationChannel;
+                    GuildInactiveEmoji = model.GuildInactiveEmoji;
+                    GuildInactivityMessage = model.GuildInactivityMessage;
+                    GuildInactivityRole = model.GuildInactivityRole;
+                    GuildActiveEmoji = model.GuildActiveEmoji;
+                }
             }
             else
             {
