@@ -1,4 +1,5 @@
 ﻿using Discord;
+using Discord.WebSocket;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -16,8 +17,8 @@ namespace InactivityBot.Services
             GuildCulture = new Dictionary<ulong, CultureInfo>();
             GuildInactivityRole = new Dictionary<ulong, ulong>();
             GuildDestinationChannel = new Dictionary<ulong, ulong>();
-            GuildActiveEmoji = new Dictionary<ulong, Emoji>();
-            GuildInactiveEmoji = new Dictionary<ulong, Emoji>();
+            GuildActiveEmoji = new Dictionary<ulong, string>();
+            GuildInactiveEmoji = new Dictionary<ulong, string>();
             GuildInactivityMessage = new Dictionary<ulong, ulong>();
         }
 
@@ -45,19 +46,21 @@ namespace InactivityBot.Services
         /// Gets the active emoji for the Inactivity Message.
         /// </summary>
         [JsonProperty]
-        public IDictionary<ulong, Emoji> GuildActiveEmoji { get; private set; }
+        public IDictionary<ulong, string> GuildActiveEmoji { get; private set; }
 
         /// <summary>
         /// Gets the inactive emoji for the Inactivity Message.
         /// </summary>
         [JsonProperty]
-        public IDictionary<ulong, Emoji> GuildInactiveEmoji { get; private set; }
+        public IDictionary<ulong, string> GuildInactiveEmoji { get; private set; }
 
         /// <summary>
         /// Gets the inactivity message for a given guild.
         /// </summary>
         [JsonProperty]
         public IDictionary<ulong, ulong> GuildInactivityMessage { get; private set; }
+
+        public Func<Cacheable<IUserMessage, ulong>, ISocketMessageChannel, SocketReaction, Task> ReactionAddedPointer { get; set; }
 
         /// <summary>
         /// Field, storing the base file name for the json file.
@@ -73,8 +76,9 @@ namespace InactivityBot.Services
         {
             if (File.Exists(fileName))
             {
-                using var sr = new StreamReader(fileName);
-                var model = JsonConvert.DeserializeObject<InactivityService>(await sr.ReadToEndAsync());
+                using var sr = new StreamReader(fileName, Encoding.Unicode);
+                var json = await sr.ReadToEndAsync();
+                var model = JsonConvert.DeserializeObject<InactivityService>(json);
 
                 if (model != null)
                 {
@@ -99,7 +103,7 @@ namespace InactivityBot.Services
         /// <returns>The task to await.</returns>
         public async Task SaveJson(string fileName)
         {
-            using var sw = new StreamWriter(fileName);
+            using var sw = new StreamWriter(fileName, false, Encoding.Unicode);
             await sw.WriteAsync(JsonConvert.SerializeObject(this));
         }
     }

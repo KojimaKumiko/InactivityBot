@@ -88,6 +88,33 @@ namespace InactivityBot.Ressources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Custom emotes are currently not supported!.
+        /// </summary>
+        public static string Emoji_Custom {
+            get {
+                return ResourceManager.GetString("Emoji_Custom", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No Emoji was specified!.
+        /// </summary>
+        public static string Emoji_NoSpecified {
+            get {
+                return ResourceManager.GetString("Emoji_NoSpecified", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Successfully set {0} as new {1} Emoji! Please also make sure to use the commands !cancel and !inactivity so that everything works as intended again!.
+        /// </summary>
+        public static string Emoji_Success {
+            get {
+                return ResourceManager.GetString("Emoji_Success", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Your Guild Wars 2 account name.
         /// </summary>
         public static string Inactivity_AccountName {
@@ -133,11 +160,38 @@ namespace InactivityBot.Ressources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Discord name: {0}\nAccount name: {1}\nPeriod: {2}\nReason: {3}.
+        ///   Looks up a localized string similar to Account name.
         /// </summary>
-        public static string Inactivity_FinalMessage {
+        public static string Inactivity_Embed_AccountName {
             get {
-                return ResourceManager.GetString("Inactivity_FinalMessage", resourceCulture);
+                return ResourceManager.GetString("Inactivity_Embed_AccountName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Period.
+        /// </summary>
+        public static string Inactivity_Embed_Period {
+            get {
+                return ResourceManager.GetString("Inactivity_Embed_Period", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reason.
+        /// </summary>
+        public static string Inactivity_Embed_Reason {
+            get {
+                return ResourceManager.GetString("Inactivity_Embed_Reason", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Inactivity!.
+        /// </summary>
+        public static string Inactivity_Embed_Title {
+            get {
+                return ResourceManager.GetString("Inactivity_Embed_Title", resourceCulture);
             }
         }
         

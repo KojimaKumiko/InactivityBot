@@ -129,6 +129,18 @@
     <value>Reaktionen erfolgreich beendet und die Nachricht gelöscht!</value>
     <comment>Successfully canceled and deleted the message.</comment>
   </data>
+  <data name="Emoji_Custom" xml:space="preserve">
+    <value>Custom Emotes werden derzeit nicht unterstützt!</value>
+    <comment>Custom emotes are currently not supported!</comment>
+  </data>
+  <data name="Emoji_NoSpecified" xml:space="preserve">
+    <value>Kein Emoji wurde angegeben!</value>
+    <comment>No Emoji was specified!</comment>
+  </data>
+  <data name="Emoji_Success" xml:space="preserve">
+    <value>{0} wurde erfolgreich als neues {1} Emoji gesetzt! Bitte nutze auch anschließend die Commands !cancel und !inactivity um sicherzugehen das alles wieder so funktioniert wie es soll!</value>
+    <comment>Successfully set {0} as new {1} Emoji! Please also make sure to use the commands !cancel and !inactivity so that everything works as intended again!</comment>
+  </data>
   <data name="Inactivity_AccountName" xml:space="preserve">
     <value>Dein Guild Wars 2 Account Name</value>
     <comment>Your Guild Wars 2 account name</comment>
@@ -149,9 +161,21 @@
     <value>Wie lange möchtest du pausieren (bitte ein Datum angeben)?</value>
     <comment>How long will you be inactive/paused (please specifiy with a date)?</comment>
   </data>
-  <data name="Inactivity_FinalMessage" xml:space="preserve">
-    <value>Discord Name: {0}\nAccount Name: {1}\nDauer: {2}\nGrund: {3}</value>
-    <comment>Discord name: {0}\nAccount name: {1}\nPeriod: {2}\nReason: {3}</comment>
+  <data name="Inactivity_Embed_AccountName" xml:space="preserve">
+    <value>Account Name</value>
+    <comment>Account name</comment>
+  </data>
+  <data name="Inactivity_Embed_Period" xml:space="preserve">
+    <value>Dauer</value>
+    <comment>Period</comment>
+  </data>
+  <data name="Inactivity_Embed_Reason" xml:space="preserve">
+    <value>Grund</value>
+    <comment>Reason</comment>
+  </data>
+  <data name="Inactivity_Embed_Title" xml:space="preserve">
+    <value>Inaktivität!</value>
+    <comment>Inactivity!</comment>
   </data>
   <data name="Inactivity_Message" xml:space="preserve">
     <value>Reagiere mit {0} um dich Inaktiv zu melden oder mit {1} um wieder Aktiv zu werden!</value>

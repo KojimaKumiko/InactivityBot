@@ -17,6 +17,7 @@ namespace InactivityBot
     public class InactivityModule : ModuleBase<SocketCommandContext>
     {
         public InactivityService InactivityModel { get; set; }
+        public DiscordSocketClient Client { get; set; }
 
         [Command("inactivity")]
         [Summary("Sends a message with reactions and reacts to them.")]
@@ -30,14 +31,14 @@ namespace InactivityBot
 
             ulong guildId = Context.Guild.Id;
             InactivityModel.GuildDestinationChannel.TryGetValue(guildId, out var destChannel);
-            if (destChannel > 0)
+            if (destChannel <= 0)
             {
                 await ReplyAsync(Inactivity.Inactivity_MissingChannel);
                 return;
             }
 
             InactivityModel.GuildInactivityRole.TryGetValue(guildId, out var role);
-            if (role > 0)
+            if (role <= 0)
             {
                 await ReplyAsync(Inactivity.Inactivity_MissingRole);
                 return;
@@ -46,20 +47,20 @@ namespace InactivityBot
             InactivityModel.GuildActiveEmoji.TryGetValue(guildId, out var activeEmoji);
             InactivityModel.GuildInactiveEmoji.TryGetValue(guildId, out var inactiveEmoji);
 
-            if (activeEmoji == null)
+            if (string.IsNullOrWhiteSpace(activeEmoji))
             {
-                activeEmoji = new Emoji("\u25B6");
+                activeEmoji = "\u25B6";
                 InactivityModel.GuildActiveEmoji.Add(guildId, activeEmoji);
             }
 
-            if (inactiveEmoji == null)
+            if (string.IsNullOrWhiteSpace(inactiveEmoji))
             {
-                inactiveEmoji = new Emoji("\u23F8\uFE0F");
+                inactiveEmoji = "\u23F8\uFE0F";
                 InactivityModel.GuildInactiveEmoji.Add(guildId, inactiveEmoji);
             }
 
             var message = await ReplyAsync(string.Format(culture, Inactivity.Inactivity_Message, inactiveEmoji, activeEmoji));
-            await message.AddReactionsAsync(new[] { inactiveEmoji, activeEmoji });
+            await message.AddReactionsAsync(new[] { new Emoji(inactiveEmoji), new Emoji(activeEmoji) });
 
             if (InactivityModel.GuildInactivityMessage.ContainsKey(guildId))
             {
@@ -70,8 +71,9 @@ namespace InactivityBot
                 InactivityModel.GuildInactivityMessage.Add(guildId, message.Id);
             }
 
-            Context.Client.ReactionAdded -= ReactionAdded;
-            Context.Client.ReactionAdded += ReactionAdded;
+            Client.ReactionAdded -= ReactionAdded;
+            Client.ReactionAdded += ReactionAdded;
+            InactivityModel.ReactionAddedPointer = ReactionAdded;
 
             return;
         }
@@ -221,7 +223,7 @@ namespace InactivityBot
 
             await Context.Channel.TriggerTypingAsync();
 
-            Context.Client.ReactionAdded -= ReactionAdded;
+            Client.ReactionAdded -= InactivityModel.ReactionAddedPointer;
 
             InactivityModel.GuildInactivityMessage.TryGetValue(Context.Guild.Id, out ulong messageId);
 
@@ -251,6 +253,78 @@ namespace InactivityBot
             }
 
             await ReplyAsync(Inactivity.Cancel_MessageNotFound);
+        }
+
+        [Command("setActive")]
+        [Alias("setActiveEmoji", "active", "activeEmoji")]
+        [Summary("Sets the new active emoji for the inactivity check.")]
+        public async Task SetActiveEmoji(string emoji)
+        {
+            CultureInfo culture = GetGuildCulture(Context.Guild);
+
+            await Context.Channel.TriggerTypingAsync();
+            
+            if (emoji == null || string.IsNullOrWhiteSpace(emoji))
+            {
+                await ReplyAsync(Inactivity.Emoji_NoSpecified);
+                return;
+            }
+
+            if (emoji.Contains("<", StringComparison.InvariantCultureIgnoreCase) || emoji.Contains(">", StringComparison.InvariantCultureIgnoreCase))
+            {
+                await ReplyAsync(Inactivity.Emoji_Custom);
+                return;
+            }
+
+            ulong guildId = Context.Guild.Id;
+            if (InactivityModel.GuildActiveEmoji.ContainsKey(guildId))
+            {
+                InactivityModel.GuildActiveEmoji[guildId] = emoji;
+            }
+            else
+            {
+                InactivityModel.GuildActiveEmoji.Add(guildId, emoji);
+            }
+
+            await InactivityModel.SaveJson(InactivityService.inactivityFileName);
+
+            await ReplyAsync(string.Format(culture, Inactivity.Emoji_Success, "Active", emoji));
+        }
+
+        [Command("setInactive")]
+        [Alias("setInactiveEmoji", "inactive", "inactiveEmoji")]
+        [Summary("Sets the new inactive emoji for the inactivity check.")]
+        public async Task SetInactiveEmoji(string emoji)
+        {
+            CultureInfo culture = GetGuildCulture(Context.Guild);
+
+            await Context.Channel.TriggerTypingAsync();
+
+            if (emoji == null || string.IsNullOrWhiteSpace(emoji))
+            {
+                await ReplyAsync(Inactivity.Emoji_NoSpecified);
+                return;
+            }
+
+            if (emoji.Contains("<", StringComparison.InvariantCultureIgnoreCase) || emoji.Contains(">", StringComparison.InvariantCultureIgnoreCase))
+            {
+                await ReplyAsync(Inactivity.Emoji_Custom);
+                return;
+            }
+
+            ulong guildId = Context.Guild.Id;
+            if (InactivityModel.GuildInactiveEmoji.ContainsKey(guildId))
+            {
+                InactivityModel.GuildInactiveEmoji[guildId] = emoji;
+            }
+            else
+            {
+                InactivityModel.GuildInactiveEmoji.Add(guildId, emoji);
+            }
+
+            await InactivityModel.SaveJson(InactivityService.inactivityFileName);
+
+            await ReplyAsync(string.Format(culture, Inactivity.Emoji_Success, "Inactive", emoji));
         }
 
         private async Task ReactionAdded(Cacheable<IUserMessage, ulong> cachedMessage, ISocketMessageChannel channel, SocketReaction reaction)
@@ -294,7 +368,7 @@ namespace InactivityBot
 
                             var guildUser = user as IGuildUser;
 
-                            if (emoji.Name == inactiveEmoji.Name)
+                            if (emoji.Name == inactiveEmoji)
                             {
                                 var dmChannel = await user.GetOrCreateDMChannelAsync().ConfigureAwait(false);
 
@@ -333,12 +407,21 @@ namespace InactivityBot
                                 InactivityModel.GuildDestinationChannel.TryGetValue(guildId, out var channelId);
                                 if (await guildUser.Guild.GetChannelAsync(channelId) is ITextChannel channel)
                                 {
-                                    // Change to be a Rich Embed.
-                                    await channel.SendMessageAsync(string.Format(culture, Inactivity.Inactivity_FinalMessage, user.Mention, accountName.Content, inactivityPeriod.Content, reason.Content))
-                                        .ConfigureAwait(false);
+                                    var embedBuilder = new EmbedBuilder();
+                                    embedBuilder
+                                        .WithAuthor(user)
+                                        .AddField(Inactivity.Inactivity_Embed_AccountName, accountName.Content)
+                                        .AddField(Inactivity.Inactivity_Embed_Period, inactivityPeriod.Content)
+                                        .AddField(Inactivity.Inactivity_Embed_Reason, reason.Content)
+                                        .WithColor(Color.LightGrey)
+                                        .WithCurrentTimestamp()
+                                        .WithTitle(Inactivity.Inactivity_Embed_Title)
+                                        .WithDescription(user.Mention);
+
+                                    await channel.SendMessageAsync(embed: embedBuilder.Build()).ConfigureAwait(false);
                                 }
                             }
-                            else if (emoji.Name == activeEmoji.Name)
+                            else if (emoji.Name == activeEmoji)
                             {
                                 InactivityModel.GuildInactivityRole.TryGetValue(guildId, out var roleId);
                                 InactivityModel.GuildDestinationChannel.TryGetValue(guildId, out var channelId);
