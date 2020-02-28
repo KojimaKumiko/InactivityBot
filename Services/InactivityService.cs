@@ -60,6 +60,7 @@ namespace InactivityBot.Services
         [JsonProperty]
         public IDictionary<ulong, ulong> GuildInactivityMessage { get; private set; }
 
+        [JsonIgnore]
         public Func<Cacheable<IUserMessage, ulong>, ISocketMessageChannel, SocketReaction, Task> ReactionAddedPointer { get; set; }
 
         /// <summary>
