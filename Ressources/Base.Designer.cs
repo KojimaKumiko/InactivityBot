@@ -79,6 +79,15 @@ namespace InactivityBot.Ressources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to [The repository (repo) of the bot]({0}).
+        /// </summary>
+        internal static string Author_Repository {
+            get {
+                return ResourceManager.GetString("Author_Repository", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The requested command was not found..
         /// </summary>
         internal static string Help_CommandNotFound {

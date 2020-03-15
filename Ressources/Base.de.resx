@@ -125,4 +125,28 @@
     <value>Untoter Vampir</value>
     <comment>Undead Vampire</comment>
   </data>
+  <data name="Author_Repository" xml:space="preserve">
+    <value>[Das Repository (Repo) für den Bot]({0})</value>
+    <comment>[The repository of the bot]({0})</comment>
+  </data>
+  <data name="Help_CommandNotFound" xml:space="preserve">
+    <value>Der angeforderte Command konnte nicht gefunden werden.</value>
+    <comment>The requested command was not found.</comment>
+  </data>
+  <data name="Help_Description" xml:space="preserve">
+    <value>Listet alle für den derzeitigen User ausführbare Commands auf! Gebe einen Command an um mehr Informationen über diesen Command zu erfahren!</value>
+    <comment>Lists all executable commands for the current user! Specify a command to get more information about the command!</comment>
+  </data>
+  <data name="Help_NoParameters" xml:space="preserve">
+    <value>Der Command hat keine Parameter</value>
+    <comment>The command has no parameters</comment>
+  </data>
+  <data name="Help_NoSummary" xml:space="preserve">
+    <value>Keine zusammenfassung verfügbar</value>
+    <comment>No summary available</comment>
+  </data>
+  <data name="Problems" xml:space="preserve">
+    <value>Wenn dir irgend ein fehler auffält, kannst du diese hier melden: {0} oder einfach für dich behalten. Was du präferierst. (Aber mal ehrlich, es wäre besser wenn du die melden würdest)</value>
+    <comment>If you encounter any issue, either report them here: {0} or keep them to yourself. Whatever you prefer. (Tho obviouly, it would be better to report them)</comment>
+  </data>
 </root>

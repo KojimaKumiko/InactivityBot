@@ -110,7 +110,7 @@ namespace InactivityBot
                 InactivityModel.GuildCulture.Add(Context.Guild.Id, culture);
             }
 
-            await InactivityModel.SaveJson(InactivityService.inactivityFileName);
+            await InactivityModel.SaveJsonAsync(InactivityService.inactivityFileName);
 
             await ReplyAsync(Inactivity.SetLanguage_Success);
         }
@@ -139,7 +139,7 @@ namespace InactivityBot
                 InactivityModel.GuildDestinationChannel.Add(channel.GuildId, channel.Id);
             }
 
-            await InactivityModel.SaveJson(InactivityService.inactivityFileName);
+            await InactivityModel.SaveJsonAsync(InactivityService.inactivityFileName);
 
             await ReplyAsync(Inactivity.SetChannel_Success);
             return;
@@ -169,7 +169,7 @@ namespace InactivityBot
                 InactivityModel.GuildInactivityRole.Add(Context.Guild.Id, role.Id);
             }
 
-            await InactivityModel.SaveJson(InactivityService.inactivityFileName);
+            await InactivityModel.SaveJsonAsync(InactivityService.inactivityFileName);
 
             await ReplyAsync(Inactivity.SetRole_Success);
             return;
@@ -207,7 +207,7 @@ namespace InactivityBot
                 InactivityModel.GuildInactivityRole.Add(Context.Guild.Id, guildRole.Id);
             }
 
-            await InactivityModel.SaveJson(InactivityService.inactivityFileName);
+            await InactivityModel.SaveJsonAsync(InactivityService.inactivityFileName);
 
             await ReplyAsync(Inactivity.SetRole_Success);
             return;
@@ -285,7 +285,7 @@ namespace InactivityBot
                 InactivityModel.GuildActiveEmoji.Add(guildId, emoji);
             }
 
-            await InactivityModel.SaveJson(InactivityService.inactivityFileName);
+            await InactivityModel.SaveJsonAsync(InactivityService.inactivityFileName);
 
             await ReplyAsync(string.Format(culture, Inactivity.Emoji_Success, "Active", emoji));
         }
@@ -321,7 +321,7 @@ namespace InactivityBot
                 InactivityModel.GuildInactiveEmoji.Add(guildId, emoji);
             }
 
-            await InactivityModel.SaveJson(InactivityService.inactivityFileName);
+            await InactivityModel.SaveJsonAsync(InactivityService.inactivityFileName);
 
             await ReplyAsync(string.Format(culture, Inactivity.Emoji_Success, "Inactive", emoji));
         }

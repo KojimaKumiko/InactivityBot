@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.WebSocket;
+using InactivityBot.Interfaces;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace InactivityBot.Services
 {
-    public class InactivityService
+    public class InactivityService : ISaveable
     {
         public InactivityService()
         {
@@ -73,7 +74,7 @@ namespace InactivityBot.Services
         /// </summary>
         /// <param name="fileName">The file to load.</param>
         /// <returns>The Task to await.</returns>
-        public async Task LoadJson(string fileName)
+        public async Task LoadJsonAsync(string fileName)
         {
             if (!Directory.Exists("inactivity"))
             {
@@ -98,7 +99,7 @@ namespace InactivityBot.Services
             }
             else
             {
-                await SaveJson(fileName);
+                await SaveJsonAsync(fileName);
             }
         }
 
@@ -107,7 +108,7 @@ namespace InactivityBot.Services
         /// </summary>
         /// <param name="fileName">The name to save this instance as.</param>
         /// <returns>The task to await.</returns>
-        public async Task SaveJson(string fileName)
+        public async Task SaveJsonAsync(string fileName)
         {
             using var sw = new StreamWriter(fileName, false, Encoding.Unicode);
             await sw.WriteAsync(JsonConvert.SerializeObject(this));

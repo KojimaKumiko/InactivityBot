@@ -123,6 +123,9 @@
   <data name="Author_Race" xml:space="preserve">
     <value>Undead Vampire</value>
   </data>
+  <data name="Author_Repository" xml:space="preserve">
+    <value>[The repository (repo) of the bot]({0})</value>
+  </data>
   <data name="Help_CommandNotFound" xml:space="preserve">
     <value>The requested command was not found.</value>
   </data>
