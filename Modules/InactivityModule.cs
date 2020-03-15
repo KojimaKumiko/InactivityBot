@@ -4,10 +4,8 @@ using Discord.WebSocket;
 using InactivityBot.Ressources;
 using InactivityBot.Services;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -330,6 +328,7 @@ namespace InactivityBot
 
         [Command("getRole")]
         [Alias("role")]
+        [Summary("Gets the current inactivity role.")]
         public async Task GetRole()
         {
             CultureInfo culture = GetGuildCulture(Context.Guild);
@@ -357,6 +356,7 @@ namespace InactivityBot
 
         [Command("getChannel")]
         [Alias("channel")]
+        [Summary("Gets the current destination channel.")]
         public async Task GetChannel()
         {
             CultureInfo culture = GetGuildCulture(Context.Guild);
