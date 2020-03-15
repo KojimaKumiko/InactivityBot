@@ -91,5 +91,32 @@ namespace InactivityBot.Modules
                 await ReplyAsync("The requested command was not found.");
             }
         }
+
+        [Command("Directories")]
+        [Alias("dir")]
+        [RequireOwner]
+        public async Task Directories(string path = null)
+        {
+            string[] result;
+
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                result = ConfigService.ListDirectories();
+            }
+            else
+            {
+                result = ConfigService.ListFiles(path);
+            }
+
+            if (result != null)
+            {
+                await ReplyAsync($"Number of directories and/or files: {result.Length}");
+                await ReplyAsync(string.Join('\n', result));
+            }
+            else
+            {
+                await ReplyAsync("No directories or files found.");
+            }
+        }
     }
 }

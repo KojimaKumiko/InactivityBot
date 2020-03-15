@@ -151,6 +151,15 @@ namespace InactivityBot.Ressources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The current destination channel is: {0}.
+        /// </summary>
+        public static string Inactivity_Channel {
+            get {
+                return ResourceManager.GetString("Inactivity_Channel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to How long will you be inactive/paused (please specifiy with a date)?.
         /// </summary>
         public static string Inactivity_Duration {
@@ -223,11 +232,38 @@ namespace InactivityBot.Ressources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No destination channel was set. To set one, use the command !channel [channelName] (where [channelName] is the name of the channel or the ping to it).
+        /// </summary>
+        public static string Inactivity_NoChannel {
+            get {
+                return ResourceManager.GetString("Inactivity_NoChannel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No inactivity role was set. To set one, use the command !role [roleName] (where [roleName] is the name of the role or the ping of it).
+        /// </summary>
+        public static string Inactivity_NoRole {
+            get {
+                return ResourceManager.GetString("Inactivity_NoRole", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Please state the reason, as to why you are pausing.
         /// </summary>
         public static string Inactivity_Reason {
             get {
                 return ResourceManager.GetString("Inactivity_Reason", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The current inactivity role is: {0}.
+        /// </summary>
+        public static string Inactivity_Role {
+            get {
+                return ResourceManager.GetString("Inactivity_Role", resourceCulture);
             }
         }
         

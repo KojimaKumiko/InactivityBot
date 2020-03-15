@@ -66,7 +66,7 @@ namespace InactivityBot.Services
         /// <summary>
         /// Field, storing the base file name for the json file.
         /// </summary>
-        public const string inactivityFileName = "inactivity.json";
+        public const string inactivityFileName = "inactivity/inactivity.json";
 
         /// <summary>
         /// Loads a json file by the given file name.
@@ -75,6 +75,11 @@ namespace InactivityBot.Services
         /// <returns>The Task to await.</returns>
         public async Task LoadJson(string fileName)
         {
+            if (!Directory.Exists("inactivity"))
+            {
+                Directory.CreateDirectory("inactivity");
+            }
+
             if (File.Exists(fileName))
             {
                 using var sr = new StreamReader(fileName, Encoding.Unicode);

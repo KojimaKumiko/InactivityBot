@@ -157,6 +157,10 @@
     <value>{0} ist nicht mehr Inaktiv!</value>
     <comment>{0} is no longer inactive!</comment>
   </data>
+  <data name="Inactivity_Channel" xml:space="preserve">
+    <value>Der derzeitige Ziel-Channel ist: {0}</value>
+    <comment>The current destination channel is: {0}</comment>
+  </data>
   <data name="Inactivity_Duration" xml:space="preserve">
     <value>Wie lange möchtest du pausieren (bitte ein Datum angeben)?</value>
     <comment>How long will you be inactive/paused (please specifiy with a date)?</comment>
@@ -189,9 +193,21 @@
     <value>Keine Inaktivitäts-Rolle angegeben. Bitte gebe eine an mit dem Kommand !setRole</value>
     <comment>No inactivity role is specified. Please make sure to specifiy one, using the command !setRole</comment>
   </data>
+  <data name="Inactivity_NoChannel" xml:space="preserve">
+    <value>Es wurde kein Ziel-Channel gesetzt. Um einen zu setzen, nutze bitte den Command !setChannel [channelName] (wo [channelName] der name des Channels ist oder der Ping dazu)</value>
+    <comment>No destination channel was set. To set one, use the command !channel [channelName] (where [channelName] is the name of the channel or the ping to it)</comment>
+  </data>
+  <data name="Inactivity_NoRole" xml:space="preserve">
+    <value>Es wurde keine Inaktivitäts-Rolle gesetzt. Um eine zu setzen, nutze bitte den Command !setRole [rollenName] (wo [rollenName] der name der Rolle ist oder der Ping dazu)</value>
+    <comment>No inactivity role was set. To set one, use the command !role [roleName] (where [roleName] is the name of the role or the ping of it)</comment>
+  </data>
   <data name="Inactivity_Reason" xml:space="preserve">
     <value>Bitte geb den Grund an, warum du pausierst</value>
     <comment>Please state the reason, as to why you are pausing</comment>
+  </data>
+  <data name="Inactivity_Role" xml:space="preserve">
+    <value>Die derzeitige Inaktivitäts-Rolle ist: {0}</value>
+    <comment>The current inactivity role is: {0}</comment>
   </data>
   <data name="SetChannel_NoChannel" xml:space="preserve">
     <value>Bitte gebe einen Channel an in dem du diesen mit einem # referenzierst z.B. #inaktiv</value>

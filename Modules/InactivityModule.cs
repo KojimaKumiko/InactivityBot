@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 namespace InactivityBot
 {
     [RequireGuildChat]
+    [RequireUserPermission(GuildPermission.ManageChannels | GuildPermission.ManageMessages)]
     public class InactivityModule : ModuleBase<SocketCommandContext>
     {
         public InactivityService InactivityModel { get; set; }
@@ -325,6 +326,60 @@ namespace InactivityBot
             await InactivityModel.SaveJson(InactivityService.inactivityFileName);
 
             await ReplyAsync(string.Format(culture, Inactivity.Emoji_Success, "Inactive", emoji));
+        }
+
+        [Command("getRole")]
+        [Alias("role")]
+        public async Task GetRole()
+        {
+            CultureInfo culture = GetGuildCulture(Context.Guild);
+
+            await Context.Channel.TriggerTypingAsync();
+
+            ulong roleId = 0;
+
+            if (InactivityModel.GuildInactivityRole.ContainsKey(Context.Guild.Id))
+            {
+                roleId = InactivityModel.GuildInactivityRole[Context.Guild.Id];
+            }
+
+            var role = Context.Guild.GetRole(roleId);
+
+            if (role != null)
+            {
+                await ReplyAsync(string.Format(culture, Inactivity.Inactivity_Role, role.Name));
+            }
+            else
+            {
+                await ReplyAsync(Inactivity.Inactivity_NoRole);
+            }
+        }
+
+        [Command("getChannel")]
+        [Alias("channel")]
+        public async Task GetChannel()
+        {
+            CultureInfo culture = GetGuildCulture(Context.Guild);
+
+            await Context.Channel.TriggerTypingAsync();
+
+            ulong channelId = 0;
+
+            if (InactivityModel.GuildDestinationChannel.ContainsKey(Context.Guild.Id))
+            {
+                channelId = InactivityModel.GuildDestinationChannel[Context.Guild.Id];
+            }
+
+            var channel = Context.Guild.GetChannel(channelId);
+
+            if (channel != null)
+            {
+                await ReplyAsync(string.Format(culture, Inactivity.Inactivity_Channel, channel.Name));
+            }
+            else
+            {
+                await ReplyAsync(Inactivity.Inactivity_NoChannel);
+            }
         }
 
         private async Task ReactionAdded(Cacheable<IUserMessage, ulong> cachedMessage, ISocketMessageChannel channel, SocketReaction reaction)

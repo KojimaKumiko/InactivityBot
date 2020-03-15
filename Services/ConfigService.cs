@@ -43,5 +43,33 @@ namespace InactivityBot
             using var sw = new StreamWriter(fileName);
             sw.Write(JsonConvert.SerializeObject(this));
         }
+
+        public static string[] ListDirectories()
+        {
+            try
+            {
+                return Directory.GetDirectories(@"/", "*.*", SearchOption.TopDirectoryOnly);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("The process failed: {0}", e.ToString());
+            }
+
+            return null;
+        }
+
+        public static string[] ListFiles(string path)
+        {
+            try
+            {
+                return Directory.GetFiles(@"/", "*.*", SearchOption.TopDirectoryOnly);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("The process failed: {0}", e.ToString());
+            }
+
+            return null;
+        }
     }
 }
