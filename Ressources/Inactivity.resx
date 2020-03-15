@@ -151,7 +151,7 @@
     <value>The current destination channel is: {0}</value>
   </data>
   <data name="Inactivity_Duration" xml:space="preserve">
-    <value>How long will you be inactive/paused (please specifiy with a date)?</value>
+    <value>How long will you be inactive/paused?</value>
   </data>
   <data name="Inactivity_Embed_AccountName" xml:space="preserve">
     <value>Account name</value>

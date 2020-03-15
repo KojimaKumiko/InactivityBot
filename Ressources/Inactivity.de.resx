@@ -162,7 +162,7 @@
     <comment>The current destination channel is: {0}</comment>
   </data>
   <data name="Inactivity_Duration" xml:space="preserve">
-    <value>Wie lange möchtest du pausieren (bitte ein Datum angeben)?</value>
+    <value>Wie lange möchtest du pausieren?</value>
     <comment>How long will you be inactive/paused (please specifiy with a date)?</comment>
   </data>
   <data name="Inactivity_Embed_AccountName" xml:space="preserve">

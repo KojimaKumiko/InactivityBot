@@ -160,7 +160,7 @@ namespace InactivityBot.Ressources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to How long will you be inactive/paused (please specifiy with a date)?.
+        ///   Looks up a localized string similar to How long will you be inactive/paused?.
         /// </summary>
         public static string Inactivity_Duration {
             get {
