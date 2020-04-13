@@ -24,14 +24,25 @@ namespace InactivityBot
         {
             _client = new DiscordSocketClient(new DiscordSocketConfig
             {
+#if DEBUG
                 LogLevel = LogSeverity.Debug,
+#elif RELEASE
+                LogLevel = LogSeverity.Info,
+#endif
                 MessageCacheSize = 50,
+                AlwaysDownloadUsers = true,
+                DefaultRetryMode = RetryMode.AlwaysRetry,
             });
 
             _commands = new CommandService(new CommandServiceConfig
             {
+#if DEBUG
                 LogLevel = LogSeverity.Debug,
+#elif RELEASE
+                LogLevel = LogSeverity.Info,
+#endif
                 CaseSensitiveCommands = false,
+                IgnoreExtraArgs = true,
             });
 
             using var services = ConfigureServices();

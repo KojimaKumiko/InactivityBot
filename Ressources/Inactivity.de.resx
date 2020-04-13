@@ -141,6 +141,14 @@
     <value>{0} wurde erfolgreich als neues {1} Emoji gesetzt! Bitte nutze auch anschließend die Commands !cancel und !inactivity um sicherzugehen das alles wieder so funktioniert wie es soll!</value>
     <comment>Successfully set {0} as new {1} Emoji! Please also make sure to use the commands !cancel and !inactivity so that everything works as intended again!</comment>
   </data>
+  <data name="GetRaid_NoRaids" xml:space="preserve">
+    <value>Es wurden keine Raids gefunden.</value>
+    <comment>No Raids were found.</comment>
+  </data>
+  <data name="GetRaid_Success" xml:space="preserve">
+    <value>Die derzeitigen Raids sind: </value>
+    <comment>The current raids are:</comment>
+  </data>
   <data name="Inactivity_AccountName" xml:space="preserve">
     <value>Dein Guild Wars 2 Account Name</value>
     <comment>Your Guild Wars 2 account name</comment>
@@ -172,6 +180,9 @@
   <data name="Inactivity_Embed_Period" xml:space="preserve">
     <value>Dauer</value>
     <comment>Period</comment>
+  </data>
+  <data name="Inactivity_Embed_Raids" xml:space="preserve">
+    <value>Raids</value>
   </data>
   <data name="Inactivity_Embed_Reason" xml:space="preserve">
     <value>Grund</value>
@@ -209,6 +220,14 @@
     <value>Die derzeitige Inaktivitäts-Rolle ist: {0}</value>
     <comment>The current inactivity role is: {0}</comment>
   </data>
+  <data name="RemoveRaid_RaidNotFound" xml:space="preserve">
+    <value>Der Raid ist in der Liste nicht vorhanden. Um zu sehen welche Raids in der Liste vorhanden sind, nutze den Command "!getRaids".</value>
+    <comment>The Raid is not present in the collection. To see what Raid is in the collection currently, use the command "!getRaids".</comment>
+  </data>
+  <data name="RemoveRaid_Success" xml:space="preserve">
+    <value>Der Raid wurde erfolgreich aus der Liste entfernt!</value>
+    <comment>The Raid was successfully removed from the collection!</comment>
+  </data>
   <data name="SetChannel_NoChannel" xml:space="preserve">
     <value>Bitte gebe einen Channel an in dem du diesen mit einem # referenzierst z.B. #inaktiv</value>
     <comment>Please provide a channel by referencing it with # and the channel name. e.g. #inactivity</comment>
@@ -228,6 +247,18 @@
   <data name="SetLanguage_Success" xml:space="preserve">
     <value>Sprache erfolgreich gewechselt!</value>
     <comment>Successfully changed language!</comment>
+  </data>
+  <data name="SetRaid_NoRaid" xml:space="preserve">
+    <value>Bitte spezifiziere eine Raid Rolle in dem du diese pingst (mit einem @) oder den Namen ausschreibst.</value>
+    <comment>Please specify a raid role either by pinging it (with an @) or writing the name of it.</comment>
+  </data>
+  <data name="SetRaid_NotFound" xml:space="preserve">
+    <value>Die angegebene Rolle konnte nicht gefunden werden. Bitte vergewissere dich das der Name richtig ist und die Rolle existiert.</value>
+    <comment>Could not find the specified raid role. Please make sure that the name is correct and it exists.</comment>
+  </data>
+  <data name="SetRaid_Success" xml:space="preserve">
+    <value>Raid-Rolle erfolgreich hinzugefügt!</value>
+    <comment>Successfully added the Raid Role!</comment>
   </data>
   <data name="SetRole_NoRole" xml:space="preserve">
     <value>Bitte gebe eine Rolle an in dem du diese mit einem @ referenzierst oder den Namen angibst. z.B. @inaktiv, @admin, Rolle mit langem namen, ...</value>

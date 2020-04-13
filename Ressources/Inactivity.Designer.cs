@@ -115,6 +115,24 @@ namespace InactivityBot.Ressources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No Raids were found..
+        /// </summary>
+        public static string GetRaid_NoRaids {
+            get {
+                return ResourceManager.GetString("GetRaid_NoRaids", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The current raids are: .
+        /// </summary>
+        public static string GetRaid_Success {
+            get {
+                return ResourceManager.GetString("GetRaid_Success", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Your Guild Wars 2 account name.
         /// </summary>
         public static string Inactivity_AccountName {
@@ -183,6 +201,15 @@ namespace InactivityBot.Ressources {
         public static string Inactivity_Embed_Period {
             get {
                 return ResourceManager.GetString("Inactivity_Embed_Period", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Raids.
+        /// </summary>
+        public static string Inactivity_Embed_Raids {
+            get {
+                return ResourceManager.GetString("Inactivity_Embed_Raids", resourceCulture);
             }
         }
         
@@ -268,6 +295,24 @@ namespace InactivityBot.Ressources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The Raid is not present in the collection. To see what Raid is in the collection currently, use the command &quot;!getRaids&quot;..
+        /// </summary>
+        public static string RemoveRaid_RaidNotFound {
+            get {
+                return ResourceManager.GetString("RemoveRaid_RaidNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Raid was successfully removed from the collection!.
+        /// </summary>
+        public static string RemoveRaid_Success {
+            get {
+                return ResourceManager.GetString("RemoveRaid_Success", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Please provide a channel by referencing it with # and the channel name. e.g. #inactivity.
         /// </summary>
         public static string SetChannel_NoChannel {
@@ -309,6 +354,33 @@ namespace InactivityBot.Ressources {
         public static string SetLanguage_Success {
             get {
                 return ResourceManager.GetString("SetLanguage_Success", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please specify a raid role either by pinging it (with an @) or writing the name of it..
+        /// </summary>
+        public static string SetRaid_NoRaid {
+            get {
+                return ResourceManager.GetString("SetRaid_NoRaid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Could not find the specified raid role. Please make sure that the name is correct and it exists..
+        /// </summary>
+        public static string SetRaid_NotFound {
+            get {
+                return ResourceManager.GetString("SetRaid_NotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Successfully added the Raid Role!.
+        /// </summary>
+        public static string SetRaid_Success {
+            get {
+                return ResourceManager.GetString("SetRaid_Success", resourceCulture);
             }
         }
         

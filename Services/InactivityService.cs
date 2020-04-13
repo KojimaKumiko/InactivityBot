@@ -21,9 +21,8 @@ namespace InactivityBot.Services
             GuildActiveEmoji = new Dictionary<ulong, string>();
             GuildInactiveEmoji = new Dictionary<ulong, string>();
             GuildInactivityMessage = new Dictionary<ulong, ulong>();
+            GuildRaidRoles = new Dictionary<ulong, List<ulong>>();
         }
-
-        // TODO: Fix circular reference loop.
 
         /// <summary>
         /// Gets the culture for a given guild.
@@ -61,6 +60,12 @@ namespace InactivityBot.Services
         [JsonProperty]
         public IDictionary<ulong, ulong> GuildInactivityMessage { get; private set; }
 
+        /// <summary>
+        /// Gets a collection of raid roles for a given guild.
+        /// </summary>
+        [JsonProperty]
+        public IDictionary<ulong, List<ulong>> GuildRaidRoles { get; private set; }
+
         [JsonIgnore]
         public Func<Cacheable<IUserMessage, ulong>, ISocketMessageChannel, SocketReaction, Task> ReactionAddedPointer { get; set; }
 
@@ -95,6 +100,7 @@ namespace InactivityBot.Services
                     GuildInactivityMessage = model.GuildInactivityMessage;
                     GuildInactivityRole = model.GuildInactivityRole;
                     GuildActiveEmoji = model.GuildActiveEmoji;
+                    GuildRaidRoles = model.GuildRaidRoles;
                 }
             }
             else

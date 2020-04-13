@@ -135,6 +135,12 @@
   <data name="Emoji_Success" xml:space="preserve">
     <value>Successfully set {0} as new {1} Emoji! Please also make sure to use the commands !cancel and !inactivity so that everything works as intended again!</value>
   </data>
+  <data name="GetRaid_NoRaids" xml:space="preserve">
+    <value>No Raids were found.</value>
+  </data>
+  <data name="GetRaid_Success" xml:space="preserve">
+    <value>The current raids are: </value>
+  </data>
   <data name="Inactivity_AccountName" xml:space="preserve">
     <value>Your Guild Wars 2 account name</value>
   </data>
@@ -158,6 +164,9 @@
   </data>
   <data name="Inactivity_Embed_Period" xml:space="preserve">
     <value>Period</value>
+  </data>
+  <data name="Inactivity_Embed_Raids" xml:space="preserve">
+    <value>Raids</value>
   </data>
   <data name="Inactivity_Embed_Reason" xml:space="preserve">
     <value>Reason</value>
@@ -186,6 +195,12 @@
   <data name="Inactivity_Role" xml:space="preserve">
     <value>The current inactivity role is: {0}</value>
   </data>
+  <data name="RemoveRaid_RaidNotFound" xml:space="preserve">
+    <value>The Raid is not present in the collection. To see what Raid is in the collection currently, use the command "!getRaids".</value>
+  </data>
+  <data name="RemoveRaid_Success" xml:space="preserve">
+    <value>The Raid was successfully removed from the collection!</value>
+  </data>
   <data name="SetChannel_NoChannel" xml:space="preserve">
     <value>Please provide a channel by referencing it with # and the channel name. e.g. #inactivity</value>
   </data>
@@ -200,6 +215,15 @@
   </data>
   <data name="SetLanguage_Success" xml:space="preserve">
     <value>Successfully changed language!</value>
+  </data>
+  <data name="SetRaid_NoRaid" xml:space="preserve">
+    <value>Please specify a raid role either by pinging it (with an @) or writing the name of it.</value>
+  </data>
+  <data name="SetRaid_NotFound" xml:space="preserve">
+    <value>Could not find the specified raid role. Please make sure that the name is correct and it exists.</value>
+  </data>
+  <data name="SetRaid_Success" xml:space="preserve">
+    <value>Successfully added the Raid Role!</value>
   </data>
   <data name="SetRole_NoRole" xml:space="preserve">
     <value>Please specify a role by referencing it with an @. e.g. @inactive, @admin, ...</value>

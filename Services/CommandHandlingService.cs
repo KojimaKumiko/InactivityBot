@@ -49,7 +49,6 @@ namespace InactivityBot.Services
 
             int argPos = 0;
             var configService = _services.GetRequiredService<ConfigService>();
-            Console.WriteLine($"service: {configService}");
             var config = await configService.LoadJsonAsync(ConfigService.configFileName);
 
             if (config == null)
@@ -57,7 +56,6 @@ namespace InactivityBot.Services
                 return;
             }
 
-            Console.WriteLine($"Prefix: {config.Token}");
             char prefix = config.CommandPrefix.ToCharArray()[0];
 
             if (!(message.HasCharPrefix(prefix, ref argPos) || message.HasMentionPrefix(_client.CurrentUser, ref argPos)))

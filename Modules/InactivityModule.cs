@@ -4,6 +4,7 @@ using Discord.WebSocket;
 using InactivityBot.Ressources;
 using InactivityBot.Services;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -382,6 +383,111 @@ namespace InactivityBot
             }
         }
 
+        [Command("getRaids")]
+        [Alias("raids")]
+        [Summary("Gets all the Raid Roles")]
+        public async Task GetRaids()
+        {
+            await Context.Channel.TriggerTypingAsync();
+            CultureInfo culture = GetGuildCulture(Context.Guild);
+
+            if (!InactivityModel.GuildRaidRoles.ContainsKey(Context.Guild.Id))
+            {
+                await ReplyAsync(Inactivity.GetRaid_NoRaids);
+                return;
+            }
+
+            var roleIds = InactivityModel.GuildRaidRoles[Context.Guild.Id];
+            var roles = Context.Guild.Roles.Where(r => roleIds.Contains(r.Id));
+
+            await ReplyAsync(Inactivity.GetRaid_Success + string.Join(", ", roles.Select(r => r.Name)));
+        }
+
+        [Command("setRaid")]
+        [Alias("raid")]
+        [Summary("Inserts the Raid role to the bot's internal collection.")]
+        public async Task SetRaid(string raid)
+        {
+            await Context.Channel.TriggerTypingAsync();
+            CultureInfo culture = GetGuildCulture(Context.Guild);
+
+            if (string.IsNullOrWhiteSpace(raid))
+            {
+                await ReplyAsync(Inactivity.SetRaid_NoRaid);
+                return;
+            }
+
+            var raidRole = Context.Guild.Roles
+                .Where(r => r.Name.Equals(raid, StringComparison.InvariantCultureIgnoreCase) || r.Mention.Equals(raid, StringComparison.InvariantCultureIgnoreCase))
+                .FirstOrDefault();
+
+            if (raidRole == null)
+            {
+                await ReplyAsync(Inactivity.SetRaid_NotFound);
+                return;
+            }
+
+            ulong guildId = Context.Guild.Id;
+            if (InactivityModel.GuildRaidRoles.ContainsKey(guildId))
+            {
+                if (InactivityModel.GuildRaidRoles[guildId] == null)
+                {
+                    InactivityModel.GuildRaidRoles[guildId] = new List<ulong>();
+                }
+
+                InactivityModel.GuildRaidRoles[guildId].Add(raidRole.Id);
+            }
+            else
+            {
+                List<ulong> raidRoles = new List<ulong> { raidRole.Id };
+                InactivityModel.GuildRaidRoles.Add(guildId, raidRoles);
+            }
+
+            await ReplyAsync(Inactivity.SetRaid_Success);
+        }
+
+        [Command("removeRaid")]
+        [Summary("Removes the Raid role from the internal collection of the bot.")]
+        public async Task RemoveRaid(string raid)
+        {
+            await Context.Channel.TriggerTypingAsync();
+            CultureInfo culture = GetGuildCulture(Context.Guild);
+
+            if (string.IsNullOrWhiteSpace(raid))
+            {
+                await ReplyAsync(Inactivity.SetRaid_NoRaid);
+                return;
+            }
+
+            ulong guildId = Context.Guild.Id;
+            if (!InactivityModel.GuildRaidRoles.ContainsKey(guildId))
+            {
+                await ReplyAsync(Inactivity.GetRaid_NoRaids);
+                return;
+            }
+
+            var role = Context.Guild.Roles
+                .Where(r => r.Name.Equals(raid, StringComparison.InvariantCultureIgnoreCase) || r.Mention.Equals(raid, StringComparison.InvariantCultureIgnoreCase))
+                .FirstOrDefault();
+
+            if (role == null)
+            {
+                await ReplyAsync(Inactivity.SetRaid_NotFound);
+                return;
+            }
+
+            var raidCollection = InactivityModel.GuildRaidRoles[guildId];
+
+            if (!raidCollection.Contains(role.Id))
+            {
+                await ReplyAsync(Inactivity.RemoveRaid_RaidNotFound);
+                return;
+            }
+
+            raidCollection.Remove(role.Id);
+            await ReplyAsync(Inactivity.RemoveRaid_Success);
+        }
+
         private async Task ReactionAdded(Cacheable<IUserMessage, ulong> cachedMessage, ISocketMessageChannel channel, SocketReaction reaction)
         {
             CultureInfo culture = GetGuildCulture(Context.Guild);
@@ -459,6 +565,14 @@ namespace InactivityBot
                                 await dmChannel.SendMessageAsync(Inactivity.Inactivity_Reason);
                                 var reason = await GetNextMessage(user).ConfigureAwait(false);
 
+                                List<string> raids = new List<string>();
+                                InactivityModel.GuildRaidRoles.TryGetValue(guildId, out var guildRoles);
+                                if (guildRoles != null)
+                                {
+                                    var raidIds = guildUser.RoleIds.Where(r => guildRoles.Contains(r));
+                                    raids = guildUser.Guild.Roles.Where(r => raidIds.Contains(r.Id)).Select(r => r.Mention).ToList();
+                                }
+
                                 InactivityModel.GuildDestinationChannel.TryGetValue(guildId, out var channelId);
                                 if (await guildUser.Guild.GetChannelAsync(channelId) is ITextChannel channel)
                                 {
@@ -473,7 +587,12 @@ namespace InactivityBot
                                         .WithTitle(Inactivity.Inactivity_Embed_Title)
                                         .WithDescription(user.Mention);
 
-                                    await channel.SendMessageAsync(embed: embedBuilder.Build()).ConfigureAwait(false);
+                                    if (raids.Count > 0)
+                                    {
+                                        embedBuilder.AddField(Inactivity.Inactivity_Embed_Raids, string.Join(" ", raids));
+                                    }
+
+                                    await channel.SendMessageAsync(text: string.Join(" ", raids), embed: embedBuilder.Build()).ConfigureAwait(false);
                                 }
                             }
                             else if (emoji.Name == activeEmoji)
