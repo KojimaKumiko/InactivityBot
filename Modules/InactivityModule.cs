@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using InactivityBot.Models;
 using InactivityBot.Ressources;
 using InactivityBot.Services;
 using System;
@@ -576,6 +577,8 @@ namespace InactivityBot
                                 InactivityModel.GuildDestinationChannel.TryGetValue(guildId, out var channelId);
                                 if (await guildUser.Guild.GetChannelAsync(channelId) is ITextChannel channel)
                                 {
+                                    await dmChannel.SendMessageAsync(Inactivity.Inactive_Success);
+
                                     var embedBuilder = new EmbedBuilder();
                                     embedBuilder
                                         .WithAuthor(user)
@@ -593,6 +596,11 @@ namespace InactivityBot
                                     }
 
                                     await channel.SendMessageAsync(text: string.Join(" ", raids), embed: embedBuilder.Build()).ConfigureAwait(false);
+                                }
+                                else
+                                {
+                                    var applicationInfo = await Context.Client.GetApplicationInfoAsync();
+                                    await dmChannel.SendMessageAsync(string.Format(culture, Inactivity.Error, applicationInfo.Owner.Mention, InactivityError.MissingChannel));
                                 }
                             }
                             else if (emoji.Name == activeEmoji)

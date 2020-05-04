@@ -149,6 +149,10 @@
     <value>Die derzeitigen Raids sind: </value>
     <comment>The current raids are:</comment>
   </data>
+  <data name="Inactive_Success" xml:space="preserve">
+    <value>Vielen Dank für das Beantworten der Fragen. Deine Inaktivitätsmeldung wird nun von deiner Raid-Leitung oder einen der Moderatoren/Moderatorinnen bearbeitet. Wir bitten dich um Geduld, da dieser Prozess etwas Zeit in Anspruch nehmen wird.</value>
+    <comment>Thank you for answering the questions. Your Inactivity Report will now be proccessed by your Raid-Leaders or one of the moderators. Please be patient, as this proccess will take some time.</comment>
+  </data>
   <data name="Inactivity_AccountName" xml:space="preserve">
     <value>Dein Guild Wars 2 Account Name</value>
     <comment>Your Guild Wars 2 account name</comment>
@@ -191,6 +195,10 @@
   <data name="Inactivity_Embed_Title" xml:space="preserve">
     <value>Inaktivität!</value>
     <comment>Inactivity!</comment>
+  </data>
+  <data name="Inactivity_Error" xml:space="preserve">
+    <value>Es tut mir leid, aber es gab einen Fehler. Bitte kontaktiere den Author {0} und gib diesem über den folgenden Fehler bescheid: {1}.</value>
+    <comment>I'm sorry but there was an error. Please contact the Author {0} and tell them about the following error: {1}.</comment>
   </data>
   <data name="Inactivity_Message" xml:space="preserve">
     <value>Reagiere mit {0} um dich Inaktiv zu melden oder mit {1} um wieder Aktiv zu werden!</value>

@@ -115,6 +115,15 @@ namespace InactivityBot.Ressources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to I&apos;m sorry but there was an error. Please contact the Author {0} and tell them about the following error: {1}..
+        /// </summary>
+        public static string Error {
+            get {
+                return ResourceManager.GetString("Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No Raids were found..
         /// </summary>
         public static string GetRaid_NoRaids {
@@ -129,6 +138,15 @@ namespace InactivityBot.Ressources {
         public static string GetRaid_Success {
             get {
                 return ResourceManager.GetString("GetRaid_Success", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Thank you for answering the questions. Your Inactivity Report will now be proccessed by your Raid-Leaders or one of the moderators. Please be patient, as this proccess will take some time..
+        /// </summary>
+        public static string Inactive_Success {
+            get {
+                return ResourceManager.GetString("Inactive_Success", resourceCulture);
             }
         }
         

@@ -135,11 +135,17 @@
   <data name="Emoji_Success" xml:space="preserve">
     <value>Successfully set {0} as new {1} Emoji! Please also make sure to use the commands !cancel and !inactivity so that everything works as intended again!</value>
   </data>
+  <data name="Error" xml:space="preserve">
+    <value>I'm sorry but there was an error. Please contact the Author {0} and tell them about the following error: {1}.</value>
+  </data>
   <data name="GetRaid_NoRaids" xml:space="preserve">
     <value>No Raids were found.</value>
   </data>
   <data name="GetRaid_Success" xml:space="preserve">
     <value>The current raids are: </value>
+  </data>
+  <data name="Inactive_Success" xml:space="preserve">
+    <value>Thank you for answering the questions. Your Inactivity Report will now be proccessed by your Raid-Leaders or one of the moderators. Please be patient, as this proccess will take some time.</value>
   </data>
   <data name="Inactivity_AccountName" xml:space="preserve">
     <value>Your Guild Wars 2 account name</value>

@@ -1,13 +1,15 @@
-﻿using Discord.Commands;
+﻿using Discord;
+using Discord.Commands;
+using Discord.WebSocket;
+using InactivityBot.Models;
+using InactivityBot.Ressources;
+using InactivityBot.Services;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using Discord;
-using System.Linq;
-using InactivityBot.Ressources;
+using System.ComponentModel;
 using System.Globalization;
-using Discord.WebSocket;
-using InactivityBot.Services;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace InactivityBot.Modules
 {
@@ -175,6 +177,29 @@ namespace InactivityBot.Modules
             await BaseModel.SaveJsonAsync(BaseService.fileName);
 
             await ReplyAsync(Inactivity.SetLanguage_Success);
+        }
+
+        [Command("errors")]
+        [Summary("Lists all error codes and their description.")]
+        public async Task Errors()
+        {
+            var user = Context.User;
+            CultureInfo culture = GetUserCulture(user);
+
+            var embedBuilder = new EmbedBuilder()
+            {
+                Title = "Error Codes",
+                Timestamp = DateTime.Now,
+                Color = Color.Purple,
+                Description = "A list of all current error codes and their description."
+            };
+
+            foreach (InactivityError error in Enum.GetValues(typeof(InactivityError)))
+            {
+                embedBuilder.AddField((int)error + " - " + error.ToString(), error.GetEnumDescription());
+            }
+
+            await ReplyAsync(embed: embedBuilder.Build());
         }
 
         [Command("Directories")]

@@ -1,12 +1,9 @@
 ﻿using Discord;
-using Discord.WebSocket;
-using Newtonsoft.Json;
-using System;
-using System.IO;
-using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
 using Discord.Commands;
+using Discord.WebSocket;
 using InactivityBot.Services;
+using Microsoft.Extensions.DependencyInjection;
+using System.Threading.Tasks;
 
 namespace InactivityBot
 {
