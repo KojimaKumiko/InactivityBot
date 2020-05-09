@@ -313,6 +313,15 @@ namespace InactivityBot.Ressources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The inactivity message was not sent because the reason is missing..
+        /// </summary>
+        public static string Missing_Reason {
+            get {
+                return ResourceManager.GetString("Missing_Reason", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The Raid is not present in the collection. To see what Raid is in the collection currently, use the command &quot;!getRaids&quot;..
         /// </summary>
         public static string RemoveRaid_RaidNotFound {
@@ -426,6 +435,15 @@ namespace InactivityBot.Ressources {
         public static string SetRole_Success {
             get {
                 return ResourceManager.GetString("SetRole_Success", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Bot no longer reacts to incoming messages, as the reply took too long..
+        /// </summary>
+        public static string Timeout {
+            get {
+                return ResourceManager.GetString("Timeout", resourceCulture);
             }
         }
     }

@@ -3,7 +3,13 @@ using Discord.Commands;
 using Discord.WebSocket;
 using InactivityBot.Services;
 using Microsoft.Extensions.DependencyInjection;
+using Serilog;
+using System.Linq;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using System;
+using System.Reflection;
+using InactivityBot.Models;
 
 namespace InactivityBot
 {
@@ -11,6 +17,7 @@ namespace InactivityBot
     {
         private DiscordSocketClient _client;
         private CommandService _commands;
+        private Services.InactivityService inactivityService;
 
         public static void Main(string[] args)
         {
@@ -43,17 +50,21 @@ namespace InactivityBot
             });
 
             using var services = ConfigureServices();
-            services.GetRequiredService<LoggingService>();
+            Logger = services.GetRequiredService<LoggingService>().Logger;
             var configSerivce = services.GetRequiredService<ConfigService>();
             var client = services.GetRequiredService<DiscordSocketClient>();
 
             var config = await configSerivce.LoadJsonAsync(ConfigService.configFileName);
             if (config == null)
             {
+                Logger.Error("No Config was found.");
                 return;
             }
 
-            await services.GetRequiredService<InactivityService>().LoadJsonAsync(InactivityService.inactivityFileName);
+            client.Ready += Client_Ready;
+
+            inactivityService = services.GetRequiredService<InactivityService>();
+            await inactivityService.Model.LoadJsonAsync(InactivityModel.inactivityFileName);
 
             await client.LoginAsync(TokenType.Bot, config.Token);
             await client.StartAsync();
@@ -61,6 +72,20 @@ namespace InactivityBot
             await services.GetRequiredService<CommandHandlingService>().InitializeAsync();
 
             await Task.Delay(-1);
+        }
+
+        public ILogger Logger { get; set; }
+
+        private Task Client_Ready()
+        {
+            Logger.Information("Client Ready event fired.");
+
+            foreach (var guild in inactivityService.Model.GuildInactivityMessage.Keys)
+            {
+                inactivityService.SetupInactivity(guild);
+            }
+
+            return Task.CompletedTask;
         }
 
         private ServiceProvider ConfigureServices()

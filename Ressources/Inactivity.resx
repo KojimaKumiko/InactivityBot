@@ -201,6 +201,9 @@
   <data name="Inactivity_Role" xml:space="preserve">
     <value>The current inactivity role is: {0}</value>
   </data>
+  <data name="Missing_Reason" xml:space="preserve">
+    <value>The inactivity message was not sent because the reason is missing.</value>
+  </data>
   <data name="RemoveRaid_RaidNotFound" xml:space="preserve">
     <value>The Raid is not present in the collection. To see what Raid is in the collection currently, use the command "!getRaids".</value>
   </data>
@@ -239,5 +242,8 @@
   </data>
   <data name="SetRole_Success" xml:space="preserve">
     <value>Successfully set the inactive role!</value>
+  </data>
+  <data name="Timeout" xml:space="preserve">
+    <value>The Bot no longer reacts to incoming messages, as the reply took too long.</value>
   </data>
 </root>

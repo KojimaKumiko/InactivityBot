@@ -2,13 +2,16 @@
 using Discord.Commands;
 using Discord.WebSocket;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
+using Serilog;
+using Serilog.Events;
 
 namespace InactivityBot.Services
 {
     public class LoggingService
     {
+        public ILogger Logger { get; private set; }
+
         public LoggingService(DiscordSocketClient client, CommandService command)
         {
             if (client == null)
@@ -23,30 +26,16 @@ namespace InactivityBot.Services
 
             client.Log += LogAsync;
             command.Log += LogAsync;
+
+            Logger = new LoggerConfiguration()
+                .MinimumLevel.Verbose()
+                .WriteTo.Console()
+                .CreateLogger();
         }
 
         private Task LogAsync(LogMessage message)
         {
-            switch (message.Severity)
-            {
-                case LogSeverity.Critical:
-                case LogSeverity.Error:
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    break;
-                case LogSeverity.Warning:
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    break;
-                case LogSeverity.Info:
-                    Console.ForegroundColor = ConsoleColor.White;
-                    break;
-                case LogSeverity.Verbose:
-                case LogSeverity.Debug:
-                    Console.ForegroundColor = ConsoleColor.DarkGray;
-                    break;
-            }
-
-            Console.WriteLine($"{DateTime.Now,-19} [{message.Severity,8}] {message.Source}: {message.Message} {message.Exception}");
-            Console.ResetColor();
+            Logger.Write(GetLogLevel(message.Severity), message.Message);
 
             //if (message.Exception is CommandException cmdException)
             //{
@@ -61,5 +50,7 @@ namespace InactivityBot.Services
 
             return Task.CompletedTask;
         }
+
+        private static LogEventLevel GetLogLevel(LogSeverity severity) => (LogEventLevel)Math.Abs((int)severity - 5);
     }
 }

@@ -228,6 +228,10 @@
     <value>Die derzeitige Inaktivitäts-Rolle ist: {0}</value>
     <comment>The current inactivity role is: {0}</comment>
   </data>
+  <data name="Missing_Reason" xml:space="preserve">
+    <value>Die Inaktivitätsmeldung wurde nicht gesendet, weil der Grund dafür fehlt.</value>
+    <comment>The inactivity message was not sent because the reason is missing.</comment>
+  </data>
   <data name="RemoveRaid_RaidNotFound" xml:space="preserve">
     <value>Der Raid ist in der Liste nicht vorhanden. Um zu sehen welche Raids in der Liste vorhanden sind, nutze den Command "!getRaids".</value>
     <comment>The Raid is not present in the collection. To see what Raid is in the collection currently, use the command "!getRaids".</comment>
@@ -279,5 +283,9 @@
   <data name="SetRole_Success" xml:space="preserve">
     <value>Inaktivitäts-Rolle erfolgreich gesetzt!</value>
     <comment>Successfully set the inactive role!</comment>
+  </data>
+  <data name="Timeout" xml:space="preserve">
+    <value>Der Bot reagiert nicht mehr auf eingehende Nachrichten, da die Antwort zu lange dauerte.</value>
+    <comment>The Bot no longer reacts to incoming messages, as the reply took too long.</comment>
   </data>
 </root>

@@ -2,6 +2,7 @@
 using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -15,11 +16,13 @@ namespace InactivityBot.Services
         private readonly CommandService _commands;
         private readonly DiscordSocketClient _client;
         private readonly IServiceProvider _services;
+        private readonly ILogger _logger;
 
         public CommandHandlingService(IServiceProvider services)
         {
             _commands = services.GetRequiredService<CommandService>();
             _client = services.GetRequiredService<DiscordSocketClient>();
+            _logger = services.GetRequiredService<LoggingService>().Logger;
             _services = services;
 
             // Hooking into CommandExecuted for post-command-execution logic.
@@ -85,8 +88,10 @@ namespace InactivityBot.Services
                 return;
             }
 
+            _logger.Error($"User {context.User} tried to execute command {command.Value.Name} but it failed. Reason: '{result}'");
+
             // the command failed, let's notify the user that something happened.
-            await context.Channel.SendMessageAsync($"{result}");
+            await context.Channel.SendMessageAsync($"{result.ErrorReason}");
         }
     }
 }

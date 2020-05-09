@@ -11,6 +11,11 @@ namespace InactivityBot
     {
         public static string GetEnumDescription(this Enum value)
         {
+            if (value == null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
+
             FieldInfo fieldInfo = value.GetType().GetField(value.ToString());
 
             DescriptionAttribute[] descriptions = fieldInfo.GetCustomAttributes(typeof(DescriptionAttribute), false) as DescriptionAttribute[];
