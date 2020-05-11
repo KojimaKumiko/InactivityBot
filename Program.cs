@@ -17,7 +17,8 @@ namespace InactivityBot
     {
         private DiscordSocketClient _client;
         private CommandService _commands;
-        private Services.InactivityService inactivityService;
+        private InactivityService inactivityService;
+        private CommunityApplicationService communityApplicationService;
 
         public static void Main(string[] args)
         {
@@ -66,6 +67,9 @@ namespace InactivityBot
             inactivityService = services.GetRequiredService<InactivityService>();
             await inactivityService.Model.LoadJsonAsync(InactivityModel.inactivityFileName);
 
+            communityApplicationService = services.GetRequiredService<CommunityApplicationService>();
+            await communityApplicationService.ApplicationModel.LoadJsonAsync(CommunityApplicationModel.communityApplicationFileName);
+
             await client.LoginAsync(TokenType.Bot, config.Token);
             await client.StartAsync();
 
@@ -97,6 +101,7 @@ namespace InactivityBot
                 .AddSingleton<ConfigService>()
                 .AddSingleton<CommandHandlingService>()
                 .AddSingleton<InactivityService>()
+                .AddSingleton<CommunityApplicationService>()
                 .AddSingleton<BaseService>()
                 .BuildServiceProvider();
         }

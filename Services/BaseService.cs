@@ -9,47 +9,10 @@ using System.Threading.Tasks;
 
 namespace InactivityBot.Services
 {
-    public class BaseService : ISaveable
+    public class BaseService
     {
         public BaseService()
         {
-            UserCulture = new Dictionary<ulong, CultureInfo>();
-        }
-
-        [JsonProperty]
-        public IDictionary<ulong, CultureInfo> UserCulture { get; private set; }
-
-        [JsonIgnore]
-        public const string fileName = "inactivity/baseService.json";
-
-        public async Task LoadJsonAsync(string fileName)
-        {
-            if (!Directory.Exists("inactivity"))
-            {
-                Directory.CreateDirectory("inactivity");
-            }
-
-            if (File.Exists(fileName))
-            {
-                using var sr = new StreamReader(fileName, Encoding.Unicode);
-                var json = await sr.ReadToEndAsync();
-                var model = JsonConvert.DeserializeObject<BaseService>(json);
-
-                if (model != null)
-                {
-                    UserCulture = model.UserCulture;
-                }
-            }
-            else
-            {
-                await SaveJsonAsync(fileName);
-            }
-        }
-
-        public async Task SaveJsonAsync(string fileName)
-        {
-            using var sw = new StreamWriter(fileName, false, Encoding.Unicode);
-            await sw.WriteAsync(JsonConvert.SerializeObject(this));
         }
     }
 }

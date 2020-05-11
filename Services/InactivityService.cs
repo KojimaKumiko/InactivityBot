@@ -60,23 +60,6 @@ namespace InactivityBot.Services
             }
         }
 
-        public async Task<SocketMessage> GetNextMessage(IUser user)
-        {
-            var taskSource = new TaskCompletionSource<SocketMessage>();
-
-            Task Func(SocketMessage msg) => MessageReceived(msg, user, taskSource);
-
-            Client.MessageReceived += Func;
-
-            var source = taskSource.Task;
-            var delay = Task.Delay(TimeSpan.FromSeconds(120));
-            var task = await Task.WhenAny(source, delay).ConfigureAwait(false);
-
-            Client.MessageReceived -= Func;
-
-            return task == source ? await source : null;
-        }
-
         public CultureInfo GetGuildCulture(SocketGuild guild)
         {
             CultureInfo culture;
@@ -149,7 +132,7 @@ namespace InactivityBot.Services
                                         await dmChannel.SendMessageAsync(Inactivity.Inactivity_AccountName_DigitsMissing);
                                     }
 
-                                    accountName = await GetNextMessage(user).ConfigureAwait(false);
+                                    accountName = await HelperMethods.GetNextMessage(Client, user).ConfigureAwait(false);
 
                                     if (accountName != null)
                                     {
@@ -165,7 +148,7 @@ namespace InactivityBot.Services
                                 }
 
                                 await dmChannel.SendMessageAsync(Inactivity.Inactivity_Duration);
-                                var inactivityPeriod = await GetNextMessage(user).ConfigureAwait(false);
+                                var inactivityPeriod = await HelperMethods.GetNextMessage(Client, user).ConfigureAwait(false);
 
                                 if (inactivityPeriod == null)
                                 {
@@ -174,7 +157,7 @@ namespace InactivityBot.Services
                                 }
 
                                 await dmChannel.SendMessageAsync(Inactivity.Inactivity_Reason);
-                                var reason = await GetNextMessage(user).ConfigureAwait(false);
+                                var reason = await HelperMethods.GetNextMessage(Client, user).ConfigureAwait(false);
 
                                 if (reason == null)
                                 {
@@ -241,21 +224,6 @@ namespace InactivityBot.Services
                     }
                 }
             }
-        }
-
-        private async Task MessageReceived(SocketMessage message, IUser user, TaskCompletionSource<SocketMessage> taskSource)
-        {
-            if (!(message.Channel is IDMChannel))
-            {
-                return;
-            }
-
-            if (message.Author.Id != user.Id)
-            {
-                return;
-            }
-
-            taskSource.SetResult(message);
         }
     }
 }

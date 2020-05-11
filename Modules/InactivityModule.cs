@@ -337,7 +337,7 @@ namespace InactivityBot
         [Command("getRole")]
         [Alias("role")]
         [Summary("Gets the current inactivity role.")]
-        public async Task GetRole()
+        public async Task GetRoleAsync()
         {
             CultureInfo culture = InactivityService.GetGuildCulture(Context.Guild);
 
@@ -365,7 +365,7 @@ namespace InactivityBot
         [Command("getChannel")]
         [Alias("channel")]
         [Summary("Gets the current destination channel.")]
-        public async Task GetChannel()
+        public async Task GetChannelAsync()
         {
             CultureInfo culture = InactivityService.GetGuildCulture(Context.Guild);
 
@@ -393,7 +393,7 @@ namespace InactivityBot
         [Command("getRaids")]
         [Alias("raids")]
         [Summary("Gets all the Raid Roles")]
-        public async Task GetRaids()
+        public async Task GetRaidsAsync()
         {
             await Context.Channel.TriggerTypingAsync();
             CultureInfo culture = InactivityService.GetGuildCulture(Context.Guild);
