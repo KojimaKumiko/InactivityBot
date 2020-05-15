@@ -13,7 +13,6 @@ namespace InactivityBot.Models
     {
         public InactivityModel()
         {
-            GuildCulture = new Dictionary<ulong, CultureInfo>();
             GuildInactivityRole = new Dictionary<ulong, ulong>();
             GuildDestinationChannel = new Dictionary<ulong, ulong>();
             GuildActiveEmoji = new Dictionary<ulong, string>();
@@ -21,12 +20,6 @@ namespace InactivityBot.Models
             GuildInactivityMessage = new Dictionary<ulong, ulong>();
             GuildRaidRoles = new Dictionary<ulong, List<ulong>>();
         }
-
-        /// <summary>
-        /// Gets the culture for a given guild.
-        /// </summary>
-        [JsonProperty]
-        public IDictionary<ulong, CultureInfo> GuildCulture { get; private set; }
 
         /// <summary>
         /// Gets the inactive role for a given guild.
@@ -89,7 +82,6 @@ namespace InactivityBot.Models
 
                 if (model != null)
                 {
-                    GuildCulture = model.GuildCulture;
                     GuildDestinationChannel = model.GuildDestinationChannel;
                     GuildInactiveEmoji = model.GuildInactiveEmoji;
                     GuildInactivityMessage = model.GuildInactivityMessage;

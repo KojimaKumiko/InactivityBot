@@ -20,6 +20,7 @@ namespace InactivityBot
     {
         public InactivityService InactivityService { get; set; }
         public InactivityModel InactivityModel => InactivityService.Model;
+        public BaseService BaseService { get; set; }
         public DiscordSocketClient Client { get; set; }
         public LoggingService LoggingService { get; set; }
 
@@ -27,7 +28,7 @@ namespace InactivityBot
         [Summary("Sends a message with reactions and reacts to them.")]
         public async Task InactivityAsync()
         {
-            CultureInfo culture = InactivityService.GetGuildCulture(Context.Guild);
+            CultureInfo culture = BaseService.GetGuildCulture(Context.Guild.Id);
 
             await Context.Channel.TriggerTypingAsync();
 
@@ -81,50 +82,50 @@ namespace InactivityBot
             return;
         }
 
-        [Command("setLanguage")]
-        [Alias("language", "culture")]
-        [Summary("Changes the language of the Bot for the Guild. Use \"en-us\" for English or \"de-de\" for German")]
-        public async Task SetLanguageAsync(string locale)
-        {
-            CultureInfo culture = InactivityService.GetGuildCulture(Context.Guild);
+        //[Command("setLanguage")]
+        //[Alias("language", "culture")]
+        //[Summary("Changes the language of the Bot for the Guild. Use \"en-us\" for English or \"de-de\" for German")]
+        //public async Task SetLanguageAsync(string locale)
+        //{
+        //    CultureInfo culture = BaseService.GetGuildCulture(Context.Guild.Id);
 
-            if (string.IsNullOrWhiteSpace(locale))
-            {
-                await ReplyAsync(Inactivity.SetLanguage_NoLocale);
-                return;
-            }
+        //    if (string.IsNullOrWhiteSpace(locale))
+        //    {
+        //        await ReplyAsync(Inactivity.SetLanguage_NoLocale);
+        //        return;
+        //    }
 
-            if (!locale.Equals("en-US", StringComparison.InvariantCultureIgnoreCase) && !locale.Equals("en", StringComparison.InvariantCultureIgnoreCase)
-                && !locale.Equals("de-DE", StringComparison.InvariantCultureIgnoreCase) && !locale.Equals("de", StringComparison.InvariantCultureIgnoreCase))
-            {
-                await ReplyAsync(Inactivity.SetLanguage_NotSupported);
-                return;
-            }
+        //    if (!locale.Equals("en-US", StringComparison.InvariantCultureIgnoreCase) && !locale.Equals("en", StringComparison.InvariantCultureIgnoreCase)
+        //        && !locale.Equals("de-DE", StringComparison.InvariantCultureIgnoreCase) && !locale.Equals("de", StringComparison.InvariantCultureIgnoreCase))
+        //    {
+        //        await ReplyAsync(Inactivity.SetLanguage_NotSupported);
+        //        return;
+        //    }
 
-            culture = new CultureInfo(locale);
-            CultureInfo.CurrentCulture = culture;
-            CultureInfo.CurrentUICulture = culture;
+        //    culture = new CultureInfo(locale);
+        //    CultureInfo.CurrentCulture = culture;
+        //    CultureInfo.CurrentUICulture = culture;
 
-            if (InactivityModel.GuildCulture.ContainsKey(Context.Guild.Id))
-            {
-                InactivityModel.GuildCulture[Context.Guild.Id] = culture;
-            }
-            else
-            {
-                InactivityModel.GuildCulture.Add(Context.Guild.Id, culture);
-            }
+        //    if (InactivityModel.GuildCulture.ContainsKey(Context.Guild.Id))
+        //    {
+        //        InactivityModel.GuildCulture[Context.Guild.Id] = culture;
+        //    }
+        //    else
+        //    {
+        //        InactivityModel.GuildCulture.Add(Context.Guild.Id, culture);
+        //    }
 
-            await InactivityModel.SaveJsonAsync(InactivityModel.inactivityFileName);
+        //    await InactivityModel.SaveJsonAsync(InactivityModel.inactivityFileName);
 
-            await ReplyAsync(Inactivity.SetLanguage_Success);
-        }
+        //    await ReplyAsync(Inactivity.SetLanguage_Success);
+        //}
 
         [Command("setChannel")]
         [Alias("channel", "destinationChannel", "setDestinationChannel")]
         [Summary("Sets the channel where the bot will write the information about a User wanting to become inactive. Can be specified by pinging/referencing the channel with a # or by writing the name of it.")]
         public async Task SetChannelAsync(ITextChannel channel)
         {
-            InactivityService.GetGuildCulture(Context.Guild);
+            BaseService.GetGuildCulture(Context.Guild.Id);
 
             await Context.Channel.TriggerTypingAsync();
 
@@ -154,7 +155,7 @@ namespace InactivityBot
         [Summary("Sets the role the bot will take away from an inactive user that wants to become active again. Can be specified by pinging the role or writing it's name.")]
         public async Task SetInactiveRole(IRole role)
         {
-            InactivityService.GetGuildCulture(Context.Guild);
+            BaseService.GetGuildCulture(Context.Guild.Id);
 
             await Context.Channel.TriggerTypingAsync();
 
@@ -184,7 +185,7 @@ namespace InactivityBot
         [Summary("Sets the role the bot will take away from an inactive user that wants to become active again. Can be specified by pinging the role or writing it's name.")]
         public async Task SetInactiveRole([Remainder] string role)
         {
-            InactivityService.GetGuildCulture(Context.Guild);
+            BaseService.GetGuildCulture(Context.Guild.Id);
 
             await Context.Channel.TriggerTypingAsync();
 
@@ -222,7 +223,7 @@ namespace InactivityBot
         [Summary("Cancels the ongoing inactivity reaction check and deletes the associated message")]
         public async Task CancleInactivityReaction()
         {
-            InactivityService.GetGuildCulture(Context.Guild);
+            BaseService.GetGuildCulture(Context.Guild.Id);
 
             await Context.Channel.TriggerTypingAsync();
 
@@ -267,7 +268,7 @@ namespace InactivityBot
         [Summary("Sets the new active emoji for the inactivity check.")]
         public async Task SetActiveEmoji(string emoji)
         {
-            CultureInfo culture = InactivityService.GetGuildCulture(Context.Guild);
+            CultureInfo culture = BaseService.GetGuildCulture(Context.Guild.Id);
 
             await Context.Channel.TriggerTypingAsync();
             
@@ -303,7 +304,7 @@ namespace InactivityBot
         [Summary("Sets the new inactive emoji for the inactivity check.")]
         public async Task SetInactiveEmoji(string emoji)
         {
-            CultureInfo culture = InactivityService.GetGuildCulture(Context.Guild);
+            CultureInfo culture = BaseService.GetGuildCulture(Context.Guild.Id);
 
             await Context.Channel.TriggerTypingAsync();
 
@@ -339,7 +340,7 @@ namespace InactivityBot
         [Summary("Gets the current inactivity role.")]
         public async Task GetRoleAsync()
         {
-            CultureInfo culture = InactivityService.GetGuildCulture(Context.Guild);
+            CultureInfo culture = BaseService.GetGuildCulture(Context.Guild.Id);
 
             await Context.Channel.TriggerTypingAsync();
 
@@ -367,7 +368,7 @@ namespace InactivityBot
         [Summary("Gets the current destination channel.")]
         public async Task GetChannelAsync()
         {
-            CultureInfo culture = InactivityService.GetGuildCulture(Context.Guild);
+            CultureInfo culture = BaseService.GetGuildCulture(Context.Guild.Id);
 
             await Context.Channel.TriggerTypingAsync();
 
@@ -396,7 +397,7 @@ namespace InactivityBot
         public async Task GetRaidsAsync()
         {
             await Context.Channel.TriggerTypingAsync();
-            CultureInfo culture = InactivityService.GetGuildCulture(Context.Guild);
+            CultureInfo culture = BaseService.GetGuildCulture(Context.Guild.Id);
 
             if (!InactivityModel.GuildRaidRoles.ContainsKey(Context.Guild.Id))
             {
@@ -416,7 +417,7 @@ namespace InactivityBot
         public async Task SetRaid(string raid)
         {
             await Context.Channel.TriggerTypingAsync();
-            CultureInfo culture = InactivityService.GetGuildCulture(Context.Guild);
+            CultureInfo culture = BaseService.GetGuildCulture(Context.Guild.Id);
 
             if (string.IsNullOrWhiteSpace(raid))
             {
@@ -459,7 +460,7 @@ namespace InactivityBot
         public async Task RemoveRaid(string raid)
         {
             await Context.Channel.TriggerTypingAsync();
-            CultureInfo culture = InactivityService.GetGuildCulture(Context.Guild);
+            CultureInfo culture = BaseService.GetGuildCulture(Context.Guild.Id);
 
             if (string.IsNullOrWhiteSpace(raid))
             {

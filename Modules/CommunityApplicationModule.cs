@@ -18,7 +18,7 @@ namespace InactivityBot.Modules
     public class CommunityApplicationModule : ModuleBase<SocketCommandContext>
     {
         public CommunityApplicationService ApplicationService { get; set; }
-        public CommunityApplicationModel Model => ApplicationService.ApplicationModel;
+        public CommunityApplicationModel Model => ApplicationService.Model;
         public LoggingService LoggingService { get; set; }
 
         [Command("reaction")]
@@ -33,9 +33,10 @@ namespace InactivityBot.Modules
             if (channelId <= 0)
             {
                 await ReplyAsync("No channel");
+                return;
             }
 
-            Model.GuildEmote.TryGetValue(guildId, out string emote);
+            Model.GuildEmoji.TryGetValue(guildId, out string emote);
             if (string.IsNullOrWhiteSpace(emote))
             {
                 emote = "\u25B6";
@@ -56,8 +57,6 @@ namespace InactivityBot.Modules
 
             await Model.SaveJsonAsync(InactivityModel.inactivityFileName);
             ApplicationService.SetupApplications(guildId);
-
-            return;
         }
 
         [Command("cancelApplication")]
@@ -87,21 +86,21 @@ namespace InactivityBot.Modules
             if (emoji.Contains("<", StringComparison.InvariantCultureIgnoreCase) || emoji.Contains(">", StringComparison.InvariantCultureIgnoreCase))
             {
                 //await ReplyAsync(Inactivity.Emoji_Custom);
-                await ReplyAsync("No custom emoji");
+                await ReplyAsync("No custom emotes");
                 return;
             }
 
             ulong guildId = Context.Guild.Id;
-            if (Model.GuildEmote.ContainsKey(guildId))
+            if (Model.GuildEmoji.ContainsKey(guildId))
             {
-                Model.GuildEmote[guildId] = emoji;
+                Model.GuildEmoji[guildId] = emoji;
             }
             else
             {
-                Model.GuildEmote.Add(guildId, emoji);
+                Model.GuildEmoji.Add(guildId, emoji);
             }
 
-            await Model.SaveJsonAsync(InactivityModel.inactivityFileName);
+            await Model.SaveJsonAsync(CommunityApplicationModel.communityApplicationFileName);
 
             //await ReplyAsync(string.Format(culture, Inactivity.Emoji_Success, "Active", emoji));
             await ReplyAsync("Success");
@@ -116,13 +115,13 @@ namespace InactivityBot.Modules
 
             ulong guildId = Context.Guild.Id;
 
-            if (!Model.GuildEmote.ContainsKey(guildId))
+            if (!Model.GuildEmoji.ContainsKey(guildId))
             {
                 await ReplyAsync("No emoji");
                 return;
             }
 
-            string emoji = Model.GuildEmote[guildId];
+            string emoji = Model.GuildEmoji[guildId];
 
             await ReplyAsync(emoji);
         }
@@ -150,7 +149,7 @@ namespace InactivityBot.Modules
                 Model.GuildDestinationChannel.Add(channel.GuildId, channel.Id);
             }
 
-            await Model.SaveJsonAsync(InactivityModel.inactivityFileName);
+            await Model.SaveJsonAsync(CommunityApplicationModel.communityApplicationFileName);
 
             //await ReplyAsync(Inactivity.SetChannel_Success);
             await ReplyAsync("Success");

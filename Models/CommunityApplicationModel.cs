@@ -12,12 +12,12 @@ namespace InactivityBot.Models
     {
         public CommunityApplicationModel()
         {
-            GuildEmote = new Dictionary<ulong, string>();
+            GuildEmoji = new Dictionary<ulong, string>();
             GuildDestinationChannel = new Dictionary<ulong, ulong>();
             GuildApplicationMessage = new Dictionary<ulong, ulong>();
         }
 
-        public IDictionary<ulong, string> GuildEmote { get; private set; }
+        public IDictionary<ulong, string> GuildEmoji { get; private set; }
         public IDictionary<ulong, ulong> GuildDestinationChannel { get; private set; }
         public IDictionary<ulong, ulong> GuildApplicationMessage { get; private set; }
 
@@ -38,7 +38,7 @@ namespace InactivityBot.Models
 
                 if (model != null)
                 {
-                    GuildEmote = model.GuildEmote;
+                    GuildEmoji = model.GuildEmoji;
                     GuildDestinationChannel = model.GuildDestinationChannel;
                     GuildApplicationMessage = model.GuildApplicationMessage;
                 }

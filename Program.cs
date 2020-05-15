@@ -64,11 +64,14 @@ namespace InactivityBot
 
             client.Ready += Client_Ready;
 
+            var baseService = services.GetRequiredService<BaseService>();
+            await baseService.Model.LoadJsonAsync(BaseModel.baseFileName);
+
             inactivityService = services.GetRequiredService<InactivityService>();
             await inactivityService.Model.LoadJsonAsync(InactivityModel.inactivityFileName);
 
             communityApplicationService = services.GetRequiredService<CommunityApplicationService>();
-            await communityApplicationService.ApplicationModel.LoadJsonAsync(CommunityApplicationModel.communityApplicationFileName);
+            await communityApplicationService.Model.LoadJsonAsync(CommunityApplicationModel.communityApplicationFileName);
 
             await client.LoginAsync(TokenType.Bot, config.Token);
             await client.StartAsync();

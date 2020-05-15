@@ -13,14 +13,21 @@ namespace InactivityBot.Models
     {
         public BaseModel()
         {
+            GuildCulture = new Dictionary<ulong, CultureInfo>();
             UserCulture = new Dictionary<ulong, CultureInfo>();
         }
+
+        /// <summary>
+        /// Gets the culture for a given guild.
+        /// </summary>
+        [JsonProperty]
+        public IDictionary<ulong, CultureInfo> GuildCulture { get; private set; }
 
         [JsonProperty]
         public IDictionary<ulong, CultureInfo> UserCulture { get; private set; }
 
         [JsonIgnore]
-        public const string fileName = "inactivity/baseService.json";
+        public const string baseFileName = "inactivity/baseService.json";
 
         public async Task LoadJsonAsync(string fileName)
         {
@@ -37,6 +44,7 @@ namespace InactivityBot.Models
 
                 if (model != null)
                 {
+                    GuildCulture = model.GuildCulture;
                     UserCulture = model.UserCulture;
                 }
             }

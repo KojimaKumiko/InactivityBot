@@ -16,9 +16,8 @@ namespace InactivityBot.Modules
     public class BaseModule : ModuleBase<SocketCommandContext>
     {
         public CommandService CommandService { get; set; }
-
-        public BaseService BaseModel { get; set; }
-
+        public BaseService BaseService { get; set; }
+        public BaseModel BaseModel => BaseService.Model;
         public IServiceProvider Services { get; set; }
 
         [Command("Help")]
@@ -140,11 +139,11 @@ namespace InactivityBot.Modules
 
         [Command("culture")]
         [Alias("setCulture", "setLanguage", "language")]
-        [Summary("Sets the language for direct User interactions. Use \"en-us\" for English or \"de-de\" for German.")]
+        [Summary("Sets the language of the Bot for the Guild. Use \"en-us\" for English or \"de-de\" for German.")]
         public async Task SetCulture(string locale)
         {
-            var user = Context.User;
-            CultureInfo culture = GetUserCulture(user);
+            ulong guildId = Context.Guild.Id;
+            BaseService.GetGuildCulture(guildId);
 
             await Context.Channel.TriggerTypingAsync();
 
@@ -161,20 +160,20 @@ namespace InactivityBot.Modules
                 return;
             }
 
-            culture = new CultureInfo(locale);
+            CultureInfo culture = new CultureInfo(locale);
             CultureInfo.CurrentCulture = culture;
             CultureInfo.CurrentUICulture = culture;
 
-            if (BaseModel.UserCulture.ContainsKey(user.Id))
+            if (BaseModel.GuildCulture.ContainsKey(guildId))
             {
-                BaseModel.UserCulture[user.Id] = culture;
+                BaseModel.GuildCulture[guildId] = culture;
             }
             else
             {
-                BaseModel.UserCulture.Add(user.Id, culture);
+                BaseModel.GuildCulture.Add(guildId, culture);
             }
 
-            await BaseModel.SaveJsonAsync(BaseService.fileName);
+            await BaseModel.SaveJsonAsync(BaseModel.baseFileName);
 
             await ReplyAsync(Inactivity.SetLanguage_Success);
         }
@@ -183,8 +182,8 @@ namespace InactivityBot.Modules
         [Summary("Lists all error codes and their description.")]
         public async Task Errors()
         {
-            var user = Context.User;
-            CultureInfo culture = GetUserCulture(user);
+            //var user = Context.User;
+            //CultureInfo culture = BaseService.GetGuildCulture(user);
 
             var embedBuilder = new EmbedBuilder()
             {
@@ -227,25 +226,6 @@ namespace InactivityBot.Modules
             {
                 await ReplyAsync("No directories or files found.");
             }
-        }
-
-        private CultureInfo GetUserCulture(SocketUser user)
-        {
-            CultureInfo culture;
-            
-            if (BaseModel.UserCulture.ContainsKey(user.Id))
-            {
-                culture = BaseModel.UserCulture[user.Id];
-            }
-            else
-            {
-                culture = new CultureInfo("en-US");
-            }
-
-            CultureInfo.CurrentCulture = culture;
-            CultureInfo.CurrentUICulture = culture;
-
-            return culture;
         }
     }
 }

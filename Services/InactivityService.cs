@@ -19,9 +19,10 @@ namespace InactivityBot.Services
     public class InactivityService
     {
         private DiscordSocketClient Client { get; set; }
+        private BaseService BaseService { get; set; }
         private ILogger Logger { get; set; }
 
-        public InactivityService(DiscordSocketClient client, LoggingService loggingService)
+        public InactivityService(DiscordSocketClient client, BaseService baseService, LoggingService loggingService)
         {
             if (loggingService == null)
             {
@@ -29,6 +30,7 @@ namespace InactivityBot.Services
             }
 
             Client = client ?? throw new ArgumentNullException(nameof(client));
+            BaseService = baseService ?? throw new ArgumentNullException(nameof(baseService));
             Logger = loggingService.Logger;
 
             ReactionAddedPointers = new Dictionary<ulong, Func<Cacheable<IUserMessage, ulong>, ISocketMessageChannel, SocketReaction, Task>>();
@@ -60,36 +62,11 @@ namespace InactivityBot.Services
             }
         }
 
-        public CultureInfo GetGuildCulture(SocketGuild guild)
-        {
-            CultureInfo culture;
-
-            if (guild == null)
-            {
-                throw new ArgumentNullException(nameof(guild));
-            }
-
-            if (!Model.GuildCulture.ContainsKey(guild.Id))
-            {
-                // in case the guild/server has no Culture defined or the method was called in dm's, return en-US as default culture.
-                culture = new CultureInfo("en-US");
-            }
-            else
-            {
-                culture = Model.GuildCulture[guild.Id];
-            }
-
-            CultureInfo.CurrentCulture = culture;
-            CultureInfo.CurrentUICulture = culture;
-
-            return culture;
-        }
-
         private async Task ReactionAdded(Cacheable<IUserMessage, ulong> cachedMessage, ISocketMessageChannel channel, SocketReaction reaction, ulong guildId)
         {
             Logger.Debug("Reaction added");
 
-            CultureInfo culture = Model.GuildCulture[guildId];
+            CultureInfo culture = BaseService.GetGuildCulture(guildId);
 
             // Get the message where the reaction was added.
             var message = await cachedMessage.GetOrDownloadAsync();
