@@ -141,13 +141,53 @@
     <value>Bewerbung!</value>
     <comment>Application!</comment>
   </data>
+  <data name="Emote_CustomEmote" xml:space="preserve">
+    <value>Custom Emotes sind nicht erlaubt!</value>
+    <comment>Custom Emotes are not allowed!</comment>
+  </data>
+  <data name="Emote_GetEmote" xml:space="preserve">
+    <value>Das derzeitige Bewerbungs Emoji ist: {0}</value>
+    <comment>The current Application Emote is: {0}</comment>
+  </data>
+  <data name="Emote_MissingEmote" xml:space="preserve">
+    <value>Es wurde kein Emoji angegeben!</value>
+    <comment>No Emoji was specified!</comment>
+  </data>
+  <data name="Emote_Success" xml:space="preserve">
+    <value>Bewerbungs Emoji erfolgreich gesetzt.</value>
+    <comment>Successfully set the Application emoji.</comment>
+  </data>
   <data name="Found" xml:space="preserve">
     <value>Wie bist du auf unsere Community gestoßen?</value>
     <comment>How did you find the community?</comment>
   </data>
+  <data name="GetChannel_NotFound" xml:space="preserve">
+    <value>Der Ziel-Channel konnte nicht gefunden werden.</value>
+    <comment>Could not find the destination channel.</comment>
+  </data>
+  <data name="GetChannel_Success" xml:space="preserve">
+    <value>Der derzeitige Ziel-Channel ist: {0}</value>
+    <comment>The current destination channel is: {0}</comment>
+  </data>
   <data name="Reason" xml:space="preserve">
     <value>Warum möchtest du bei uns Mitglied werden?</value>
     <comment>Why do you want to be a part of this community?</comment>
+  </data>
+  <data name="SetChannel_NoChannel" xml:space="preserve">
+    <value>Bitte gebe einen Channel an in dem du diesen mit einem # referenzierst z.B. #inaktiv</value>
+    <comment>Please provide a channel by referencing it with # and the channel name. e.g. #inactivity</comment>
+  </data>
+  <data name="SetChannel_Success" xml:space="preserve">
+    <value>Ziel-Channel erfolgreich gesetzt!</value>
+    <comment>Succesfully set the destination channel!</comment>
+  </data>
+  <data name="Start_MissingChannel" xml:space="preserve">
+    <value>Es wurde vor dem aufrufen dieses Commands, kein Ziel Channel festgelegt. Bitte lege einen fest, mit dem Command "bewerbung channel [channel]"</value>
+    <comment>No destination channel was set, prior to calling this command. Please set one using the command "application channel [channel]"</comment>
+  </data>
+  <data name="Start_Reaction" xml:space="preserve">
+    <value>Bitte reagiere mit {0} um dich für die Community zu bewerben.</value>
+    <comment>To apply for this community, please react with {0}</comment>
   </data>
   <data name="Success" xml:space="preserve">
     <value>Vielen dank für deine Bewerbung!</value>

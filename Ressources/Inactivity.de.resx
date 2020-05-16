@@ -260,6 +260,10 @@
     <value>Sprache erfolgreich gewechselt!</value>
     <comment>Successfully changed language!</comment>
   </data>
+  <data name="SetRaid_AlreadyExisting" xml:space="preserve">
+    <value>Die Raid-Rolle ist in der Liste schon vorhanden.</value>
+    <comment>The Raid-Role is already present in the collection.</comment>
+  </data>
   <data name="SetRaid_NoRaid" xml:space="preserve">
     <value>Bitte spezifiziere eine Raid Rolle in dem du diese pingst (mit einem @) oder den Namen ausschreibst.</value>
     <comment>Please specify a raid role either by pinging it (with an @) or writing the name of it.</comment>

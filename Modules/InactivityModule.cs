@@ -6,6 +6,7 @@ using InactivityBot.Ressources;
 using InactivityBot.Services;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -14,6 +15,8 @@ using System.Threading.Tasks;
 
 namespace InactivityBot
 {
+    [Group("inactivity")]
+    [Alias("inaktivität")]
     [RequireGuildChat]
     [RequireUserPermission(GuildPermission.ManageChannels | GuildPermission.ManageMessages)]
     public class InactivityModule : ModuleBase<SocketCommandContext>
@@ -24,7 +27,7 @@ namespace InactivityBot
         public DiscordSocketClient Client { get; set; }
         public LoggingService LoggingService { get; set; }
 
-        [Command("inactivity")]
+        [Command("start")]
         [Summary("Sends a message with reactions and reacts to them.")]
         public async Task InactivityAsync()
         {
@@ -81,44 +84,6 @@ namespace InactivityBot
 
             return;
         }
-
-        //[Command("setLanguage")]
-        //[Alias("language", "culture")]
-        //[Summary("Changes the language of the Bot for the Guild. Use \"en-us\" for English or \"de-de\" for German")]
-        //public async Task SetLanguageAsync(string locale)
-        //{
-        //    CultureInfo culture = BaseService.GetGuildCulture(Context.Guild.Id);
-
-        //    if (string.IsNullOrWhiteSpace(locale))
-        //    {
-        //        await ReplyAsync(Inactivity.SetLanguage_NoLocale);
-        //        return;
-        //    }
-
-        //    if (!locale.Equals("en-US", StringComparison.InvariantCultureIgnoreCase) && !locale.Equals("en", StringComparison.InvariantCultureIgnoreCase)
-        //        && !locale.Equals("de-DE", StringComparison.InvariantCultureIgnoreCase) && !locale.Equals("de", StringComparison.InvariantCultureIgnoreCase))
-        //    {
-        //        await ReplyAsync(Inactivity.SetLanguage_NotSupported);
-        //        return;
-        //    }
-
-        //    culture = new CultureInfo(locale);
-        //    CultureInfo.CurrentCulture = culture;
-        //    CultureInfo.CurrentUICulture = culture;
-
-        //    if (InactivityModel.GuildCulture.ContainsKey(Context.Guild.Id))
-        //    {
-        //        InactivityModel.GuildCulture[Context.Guild.Id] = culture;
-        //    }
-        //    else
-        //    {
-        //        InactivityModel.GuildCulture.Add(Context.Guild.Id, culture);
-        //    }
-
-        //    await InactivityModel.SaveJsonAsync(InactivityModel.inactivityFileName);
-
-        //    await ReplyAsync(Inactivity.SetLanguage_Success);
-        //}
 
         [Command("setChannel")]
         [Alias("channel", "destinationChannel", "setDestinationChannel")]
@@ -414,41 +379,75 @@ namespace InactivityBot
         [Command("setRaid")]
         [Alias("raid")]
         [Summary("Inserts the Raid role to the bot's internal collection.")]
-        public async Task SetRaid(string raid)
+        public async Task SetRaid(IRole raid)
         {
             await Context.Channel.TriggerTypingAsync();
-            CultureInfo culture = BaseService.GetGuildCulture(Context.Guild.Id);
 
-            if (string.IsNullOrWhiteSpace(raid))
-            {
-                await ReplyAsync(Inactivity.SetRaid_NoRaid);
-                return;
-            }
+            ulong guildId = Context.Guild.Id;
+            BaseService.GetGuildCulture(guildId);
 
-            var raidRole = Context.Guild.Roles
-                .Where(r => r.Name.Equals(raid, StringComparison.InvariantCultureIgnoreCase) || r.Mention.Equals(raid, StringComparison.InvariantCultureIgnoreCase))
-                .FirstOrDefault();
-
-            if (raidRole == null)
+            if (raid == null)
             {
                 await ReplyAsync(Inactivity.SetRaid_NotFound);
                 return;
             }
 
-            ulong guildId = Context.Guild.Id;
             if (InactivityModel.GuildRaidRoles.ContainsKey(guildId))
             {
-                if (InactivityModel.GuildRaidRoles[guildId] == null)
+                List<ulong> roles = InactivityModel.GuildRaidRoles[guildId];
+                if (roles == null)
+                {
+                    InactivityModel.GuildRaidRoles[guildId] = new List<ulong>();
+                }
+                else if (roles.Contains(raid.Id))
+                {
+                    await ReplyAsync(Inactivity.SetRaid_AlreadyExisting);
+                    return;
+                }
+
+                InactivityModel.GuildRaidRoles[guildId].Add(raid.Id);
+            }
+            else
+            {
+                List<ulong> raidRoles = new List<ulong> { raid.Id };
+                InactivityModel.GuildRaidRoles.Add(guildId, raidRoles);
+            }
+
+            await InactivityModel.SaveJsonAsync(InactivityModel.inactivityFileName);
+            await ReplyAsync(Inactivity.SetRaid_Success);
+        }
+
+        [Command("setRaids")]
+        [Alias("raids")]
+        [Summary("Inserts multiple raid roles to the bot's internal collection.")]
+        public async Task SetRaid([Remainder] List<IRole> raids)
+        {
+            await Context.Channel.TriggerTypingAsync();
+
+            ulong guildId = Context.Guild.Id;
+            BaseService.GetGuildCulture(guildId);
+
+            if (raids == null || raids.Count <= 0)
+            {
+                await ReplyAsync(Inactivity.SetRaid_NotFound);
+                return;
+            }
+
+            if (InactivityModel.GuildRaidRoles.ContainsKey(guildId))
+            {
+                List<ulong> roles = InactivityModel.GuildRaidRoles[guildId];
+                if (roles == null)
                 {
                     InactivityModel.GuildRaidRoles[guildId] = new List<ulong>();
                 }
 
-                InactivityModel.GuildRaidRoles[guildId].Add(raidRole.Id);
+                var newRoles = raids.Select(r => r.Id).Except(roles);
+
+                InactivityModel.GuildRaidRoles[guildId].AddRange(newRoles);
             }
             else
             {
-                List<ulong> raidRoles = new List<ulong> { raidRole.Id };
-                InactivityModel.GuildRaidRoles.Add(guildId, raidRoles);
+                InactivityModel.GuildRaidRoles.Add(guildId, raids.Select(r => r.Id).ToList());
             }
 
             await InactivityModel.SaveJsonAsync(InactivityModel.inactivityFileName);
@@ -457,29 +456,20 @@ namespace InactivityBot
 
         [Command("removeRaid")]
         [Summary("Removes the Raid role from the internal collection of the bot.")]
-        public async Task RemoveRaid(string raid)
+        public async Task RemoveRaid(IRole raid)
         {
             await Context.Channel.TriggerTypingAsync();
-            CultureInfo culture = BaseService.GetGuildCulture(Context.Guild.Id);
-
-            if (string.IsNullOrWhiteSpace(raid))
-            {
-                await ReplyAsync(Inactivity.SetRaid_NoRaid);
-                return;
-            }
 
             ulong guildId = Context.Guild.Id;
+            BaseService.GetGuildCulture(guildId);
+
             if (!InactivityModel.GuildRaidRoles.ContainsKey(guildId))
             {
                 await ReplyAsync(Inactivity.GetRaid_NoRaids);
                 return;
             }
 
-            var role = Context.Guild.Roles
-                .Where(r => r.Name.Equals(raid, StringComparison.InvariantCultureIgnoreCase) || r.Mention.Equals(raid, StringComparison.InvariantCultureIgnoreCase))
-                .FirstOrDefault();
-
-            if (role == null)
+            if (raid == null)
             {
                 await ReplyAsync(Inactivity.SetRaid_NotFound);
                 return;
@@ -487,14 +477,48 @@ namespace InactivityBot
 
             var raidCollection = InactivityModel.GuildRaidRoles[guildId];
 
-            if (!raidCollection.Contains(role.Id))
+            if (!raidCollection.Contains(raid.Id))
             {
                 await ReplyAsync(Inactivity.RemoveRaid_RaidNotFound);
                 return;
             }
 
-            raidCollection.Remove(role.Id);
+            raidCollection.Remove(raid.Id);
             await InactivityModel.SaveJsonAsync(InactivityModel.inactivityFileName);
+
+            await ReplyAsync(Inactivity.RemoveRaid_Success);
+        }
+
+        [Command("removeRaids")]
+        [Description("Removes multiple raid roles from the internal collection of the bot.")]
+        public async Task RemoveRaids([Remainder] List<IRole> raids)
+        {
+            await Context.Channel.TriggerTypingAsync();
+
+            ulong guildId = Context.Guild.Id;
+            BaseService.GetGuildCulture(guildId);
+
+            if (!InactivityModel.GuildRaidRoles.ContainsKey(guildId))
+            {
+                await ReplyAsync(Inactivity.GetRaid_NoRaids);
+                return;
+            }
+
+            if (raids == null || raids.Count <= 0)
+            {
+                await ReplyAsync(Inactivity.SetRaid_NotFound);
+                return;
+            }
+
+            var raidCollection = InactivityModel.GuildRaidRoles[guildId];
+
+            foreach (var raid in raids.Select(r => r.Id))
+            {
+                raidCollection.Remove(raid);
+            }
+
+            await InactivityModel.SaveJsonAsync(InactivityModel.inactivityFileName);
+
             await ReplyAsync(Inactivity.RemoveRaid_Success);
         }
 

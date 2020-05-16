@@ -92,6 +92,11 @@ namespace InactivityBot
                 inactivityService.SetupInactivity(guild);
             }
 
+            foreach (var guild in communityApplicationService.Model.GuildApplicationMessage.Keys)
+            {
+                communityApplicationService.SetupApplications(guild);
+            }
+
             return Task.CompletedTask;
         }
 

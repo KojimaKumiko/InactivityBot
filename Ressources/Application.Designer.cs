@@ -115,6 +115,42 @@ namespace InactivityBot.Ressources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Custom Emotes are not allowed!.
+        /// </summary>
+        internal static string Emote_CustomEmote {
+            get {
+                return ResourceManager.GetString("Emote_CustomEmote", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The current Application Emote is: {0}.
+        /// </summary>
+        internal static string Emote_GetEmote {
+            get {
+                return ResourceManager.GetString("Emote_GetEmote", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No Emoji was specified!.
+        /// </summary>
+        internal static string Emote_MissingEmote {
+            get {
+                return ResourceManager.GetString("Emote_MissingEmote", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Successfully set the Application emoji..
+        /// </summary>
+        internal static string Emote_Success {
+            get {
+                return ResourceManager.GetString("Emote_Success", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to How did you find the community?.
         /// </summary>
         internal static string Found {
@@ -124,11 +160,65 @@ namespace InactivityBot.Ressources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Could not find the destination channel..
+        /// </summary>
+        internal static string GetChannel_NotFound {
+            get {
+                return ResourceManager.GetString("GetChannel_NotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The current destination channel is: {0}.
+        /// </summary>
+        internal static string GetChannel_Success {
+            get {
+                return ResourceManager.GetString("GetChannel_Success", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Why do you want to be a part of this community?.
         /// </summary>
         internal static string Reason {
             get {
                 return ResourceManager.GetString("Reason", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please provide a channel by referencing it with # and the channel name. e.g. #inactivity.
+        /// </summary>
+        internal static string SetChannel_NoChannel {
+            get {
+                return ResourceManager.GetString("SetChannel_NoChannel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Succesfully set the destination channel!.
+        /// </summary>
+        internal static string SetChannel_Success {
+            get {
+                return ResourceManager.GetString("SetChannel_Success", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No destination channel was set, prior to calling this command. Please set one using the command &quot;application channel [channel]&quot;.
+        /// </summary>
+        internal static string Start_MissingChannel {
+            get {
+                return ResourceManager.GetString("Start_MissingChannel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to To apply for this community, please react with {0}.
+        /// </summary>
+        internal static string Start_Reaction {
+            get {
+                return ResourceManager.GetString("Start_Reaction", resourceCulture);
             }
         }
         

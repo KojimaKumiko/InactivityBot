@@ -227,5 +227,12 @@ namespace InactivityBot.Modules
                 await ReplyAsync("No directories or files found.");
             }
         }
+
+        [Command("echo")]
+        [RequireOwner]
+        public async Task Echo([Remainder]string input)
+        {
+            await ReplyAsync(input);
+        }
     }
 }

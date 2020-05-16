@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using InactivityBot.TypeReaders;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using System;
@@ -34,6 +35,9 @@ namespace InactivityBot.Services
 
         public async Task InitializeAsync()
         {
+            // Add TypeReader
+            _commands.AddTypeReader(typeof(List<IRole>), new RoleListTypeReader());
+
             // Register modules that are public and inherit ModuleBase<T>
             await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
         }

@@ -135,11 +135,41 @@
   <data name="Embed_Title" xml:space="preserve">
     <value>Application!</value>
   </data>
+  <data name="Emote_CustomEmote" xml:space="preserve">
+    <value>Custom Emotes are not allowed!</value>
+  </data>
+  <data name="Emote_GetEmote" xml:space="preserve">
+    <value>The current Application Emote is: {0}</value>
+  </data>
+  <data name="Emote_MissingEmote" xml:space="preserve">
+    <value>No Emoji was specified!</value>
+  </data>
+  <data name="Emote_Success" xml:space="preserve">
+    <value>Successfully set the Application emoji.</value>
+  </data>
   <data name="Found" xml:space="preserve">
     <value>How did you find the community?</value>
   </data>
+  <data name="GetChannel_NotFound" xml:space="preserve">
+    <value>Could not find the destination channel.</value>
+  </data>
+  <data name="GetChannel_Success" xml:space="preserve">
+    <value>The current destination channel is: {0}</value>
+  </data>
   <data name="Reason" xml:space="preserve">
     <value>Why do you want to be a part of this community?</value>
+  </data>
+  <data name="SetChannel_NoChannel" xml:space="preserve">
+    <value>Please provide a channel by referencing it with # and the channel name. e.g. #inactivity</value>
+  </data>
+  <data name="SetChannel_Success" xml:space="preserve">
+    <value>Succesfully set the destination channel!</value>
+  </data>
+  <data name="Start_MissingChannel" xml:space="preserve">
+    <value>No destination channel was set, prior to calling this command. Please set one using the command "application channel [channel]"</value>
+  </data>
+  <data name="Start_Reaction" xml:space="preserve">
+    <value>To apply for this community, please react with {0}</value>
   </data>
   <data name="Success" xml:space="preserve">
     <value>Thank you for your application!</value>

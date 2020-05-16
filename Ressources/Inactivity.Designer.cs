@@ -385,6 +385,15 @@ namespace InactivityBot.Ressources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The Raid-Role is already present in the collection..
+        /// </summary>
+        public static string SetRaid_AlreadyExisting {
+            get {
+                return ResourceManager.GetString("SetRaid_AlreadyExisting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Please specify a raid role either by pinging it (with an @) or writing the name of it..
         /// </summary>
         public static string SetRaid_NoRaid {
