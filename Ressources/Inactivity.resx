@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AccountName_Incorrect" xml:space="preserve">
+    <value>Your Guild Wars 2 account name is inccorect. Please make sure to also specify the last 4 Digits of your GW2 account name.</value>
+  </data>
   <data name="Cancel_MessageNotFound" xml:space="preserve">
     <value>Successfully canceled the reaction event, but could not find the message to delete.</value>
   </data>

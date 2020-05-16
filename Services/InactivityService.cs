@@ -21,6 +21,7 @@ namespace InactivityBot.Services
         private DiscordSocketClient Client { get; set; }
         private BaseService BaseService { get; set; }
         private ILogger Logger { get; set; }
+        private List<ulong> OngoingUsers { get; set; }
 
         public InactivityService(DiscordSocketClient client, BaseService baseService, LoggingService loggingService)
         {
@@ -35,6 +36,7 @@ namespace InactivityBot.Services
 
             ReactionAddedPointers = new Dictionary<ulong, Func<Cacheable<IUserMessage, ulong>, ISocketMessageChannel, SocketReaction, Task>>();
             Model = new InactivityModel();
+            OngoingUsers = new List<ulong>();
         }
 
         public InactivityModel Model { get; set; }
@@ -78,6 +80,15 @@ namespace InactivityBot.Services
                 // Check if the user object is set and if the user is not a bot.
                 if (user != null && !user.IsBot)
                 {
+                    if (OngoingUsers.Contains(user.Id))
+                    {
+                        Logger.Debug($"User with Id {user.Id} reacted to the message again too soon.");
+                        await message.RemoveReactionAsync(reaction.Emote, user).ConfigureAwait(false);
+                        return;
+                    }
+
+                    OngoingUsers.Add(user.Id);
+
                     // Check if the reaction was added to the inactivity message.
                     Model.GuildInactivityMessage.TryGetValue(guildId, out var messageId);
                     if (messageId > 0 && message.Id == messageId)
@@ -106,14 +117,14 @@ namespace InactivityBot.Services
                                 {
                                     if (accountName != null)
                                     {
-                                        await dmChannel.SendMessageAsync(Inactivity.Inactivity_AccountName_DigitsMissing);
+                                        await dmChannel.SendMessageAsync(Inactivity.AccountName_Incorrect);
                                     }
 
                                     accountName = await HelperMethods.GetNextMessage(Client, user).ConfigureAwait(false);
 
                                     if (accountName != null)
                                     {
-                                        regexMatch = Regex.IsMatch(accountName.Content, @"\.\d{4}$");
+                                        regexMatch = Regex.IsMatch(accountName.Content, @"[a-zA-Z]+\.\d{4}$");
                                     }
                                 }
                                 while (accountName != null && !regexMatch);
@@ -121,6 +132,7 @@ namespace InactivityBot.Services
                                 if (accountName == null)
                                 {
                                     await dmChannel.SendMessageAsync(Inactivity.Timeout);
+                                    OngoingUsers.Remove(user.Id);
                                     return;
                                 }
 
@@ -130,6 +142,7 @@ namespace InactivityBot.Services
                                 if (inactivityPeriod == null)
                                 {
                                     await dmChannel.SendMessageAsync(Inactivity.Timeout);
+                                    OngoingUsers.Remove(user.Id);
                                     return;
                                 }
 
@@ -139,6 +152,7 @@ namespace InactivityBot.Services
                                 if (reason == null)
                                 {
                                     await dmChannel.SendMessageAsync(Inactivity.Missing_Reason);
+                                    OngoingUsers.Remove(user.Id);
                                     return;
                                 }
 
@@ -196,6 +210,8 @@ namespace InactivityBot.Services
                                     }
                                 }
                             }
+                            
+                            OngoingUsers.Remove(user.Id);
                         });
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                     }

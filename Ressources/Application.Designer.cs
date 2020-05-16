@@ -79,6 +79,15 @@ namespace InactivityBot.Ressources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Your Guild Wars 2 account name is inccorect. Please make sure to also specify the last 4 Digits of your GW2 account name..
+        /// </summary>
+        internal static string AccountName_Incorrect {
+            get {
+                return ResourceManager.GetString("AccountName_Incorrect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Account name.
         /// </summary>
         internal static string Embed_AccountName {

@@ -61,6 +61,15 @@ namespace InactivityBot.Ressources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Your Guild Wars 2 account name is inccorect. Please make sure to also specify the last 4 Digits of your GW2 account name..
+        /// </summary>
+        public static string AccountName_Incorrect {
+            get {
+                return ResourceManager.GetString("AccountName_Incorrect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Successfully canceled the reaction event, but could not find the message to delete..
         /// </summary>
         public static string Cancel_MessageNotFound {

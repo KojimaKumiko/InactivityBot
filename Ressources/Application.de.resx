@@ -125,6 +125,10 @@
     <value>Bitte geb auch die letzten 4 Ziffern deines GW2 Account Namens an.</value>
     <comment>Please also specifiy the last 4 digits of your GW2 account name!</comment>
   </data>
+  <data name="AccountName_Incorrect" xml:space="preserve">
+    <value>Dein Guild Wars 2 Account Name ist falsch. Bitte geb auch die letzten 4 Ziffern deines GW2 Account Namens an.</value>
+    <comment>Your Guild Wars 2 account name is inccorect. Please make sure to also specify the last 4 Digits of your GW2 account name.</comment>
+  </data>
   <data name="Embed_AccountName" xml:space="preserve">
     <value>Account Name</value>
     <comment>Account name</comment>

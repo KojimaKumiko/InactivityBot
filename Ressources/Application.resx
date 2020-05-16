@@ -123,6 +123,9 @@
   <data name="AccountName_DiggitsMissing" xml:space="preserve">
     <value>Please also specifiy the last 4 digits of your GW2 account name.</value>
   </data>
+  <data name="AccountName_Incorrect" xml:space="preserve">
+    <value>Your Guild Wars 2 account name is inccorect. Please make sure to also specify the last 4 Digits of your GW2 account name.</value>
+  </data>
   <data name="Embed_AccountName" xml:space="preserve">
     <value>Account name</value>
   </data>

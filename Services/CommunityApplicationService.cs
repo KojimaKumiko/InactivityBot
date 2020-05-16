@@ -17,6 +17,7 @@ namespace InactivityBot.Services
         private DiscordSocketClient Client { get; set; }
         private BaseService BaseService { get; set; }
         private ILogger Logger { get; set; }
+        private List<ulong> OngoingUsers { get; set; }
 
         public CommunityApplicationService(DiscordSocketClient client, BaseService baseService, LoggingService loggingService)
         {
@@ -31,6 +32,7 @@ namespace InactivityBot.Services
 
             ReactionAddedPointers = new Dictionary<ulong, Func<Cacheable<IUserMessage, ulong>, ISocketMessageChannel, SocketReaction, Task>>();
             Model = new CommunityApplicationModel();
+            OngoingUsers = new List<ulong>();
         }
 
         public CommunityApplicationModel Model { get; private set; }
@@ -73,6 +75,15 @@ namespace InactivityBot.Services
                 // Check if the user object is set and if the user is not a bot.
                 if (user != null && !user.IsBot)
                 {
+                    if (OngoingUsers.Contains(user.Id))
+                    {
+                        Logger.Debug($"User with Id {user.Id} reacted to the message again too soon.");
+                        await message.RemoveReactionAsync(reaction.Emote, user).ConfigureAwait(false);
+                        return;
+                    }
+
+                    OngoingUsers.Add(user.Id);
+
                     // Check if the reaction was added to the inactivity message.
                     Model.GuildApplicationMessage.TryGetValue(guildId, out var messageId);
                     if (messageId > 0 && message.Id == messageId)
@@ -100,14 +111,14 @@ namespace InactivityBot.Services
                                 {
                                     if (accountName != null)
                                     {
-                                        await dmChannel.SendMessageAsync(Application.AccountName_DiggitsMissing);
+                                        await dmChannel.SendMessageAsync(Application.AccountName_Incorrect);
                                     }
 
                                     accountName = await HelperMethods.GetNextMessage(Client, user).ConfigureAwait(false);
 
                                     if (accountName != null)
                                     {
-                                        regexMatch = Regex.IsMatch(accountName.Content, @"\.\d{4}$");
+                                        regexMatch = Regex.IsMatch(accountName.Content, @"[a-zA-Z]+\.\d{4}$");
                                     }
                                 }
                                 while (accountName != null && !regexMatch);
@@ -115,6 +126,7 @@ namespace InactivityBot.Services
                                 if (accountName == null)
                                 {
                                     await dmChannel.SendMessageAsync(Application.Timeout);
+                                    OngoingUsers.Remove(user.Id);
                                     return;
                                 }
 
@@ -124,6 +136,7 @@ namespace InactivityBot.Services
                                 if (applicationReason == null)
                                 {
                                     await dmChannel.SendMessageAsync(Application.Timeout);
+                                    OngoingUsers.Remove(user.Id);
                                     return;
                                 }
 
@@ -154,6 +167,8 @@ namespace InactivityBot.Services
                                     await dmChannel.SendMessageAsync(string.Format(culture, Inactivity.Error, applicationInfo.Owner.Mention, InactivityError.MissingChannel));
                                 }
                             }
+
+                            OngoingUsers.Remove(user.Id);
                         });
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                     }
