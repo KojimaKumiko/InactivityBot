@@ -147,8 +147,17 @@
   <data name="GetRaid_Success" xml:space="preserve">
     <value>The current raids are: </value>
   </data>
+  <data name="GuildMemberUpdated_Start" xml:space="preserve">
+    <value>Starting to listen to the "GuildMemberUpdated" event.</value>
+  </data>
+  <data name="GuildMemberUpdated_Stop" xml:space="preserve">
+    <value>Stopped listening to the "GuildMemberUpdated" event.</value>
+  </data>
   <data name="Inactive_Success" xml:space="preserve">
     <value>Thank you for answering the questions. Your Inactivity Report will now be proccessed by your Raid-Leaders or one of the moderators. Please be patient, as this proccess will take some time.</value>
+  </data>
+  <data name="InactivityRole_Added" xml:space="preserve">
+    <value>Inactivity Role already added.</value>
   </data>
   <data name="Inactivity_AccountName" xml:space="preserve">
     <value>Your Guild Wars 2 account name</value>
@@ -182,6 +191,9 @@
   </data>
   <data name="Inactivity_Embed_Title" xml:space="preserve">
     <value>Inactivity!</value>
+  </data>
+  <data name="Inactivity_Forced" xml:space="preserve">
+    <value>The raider {0} was set inactive by {1}</value>
   </data>
   <data name="Inactivity_Message" xml:space="preserve">
     <value>React with {0} to be inactiv or {1} to be active again!</value>

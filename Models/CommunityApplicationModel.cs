@@ -15,11 +15,13 @@ namespace InactivityBot.Models
             GuildEmoji = new Dictionary<ulong, string>();
             GuildDestinationChannel = new Dictionary<ulong, ulong>();
             GuildApplicationMessage = new Dictionary<ulong, ulong>();
+            GuildRoleToMention = new Dictionary<ulong, ulong>();
         }
 
         public IDictionary<ulong, string> GuildEmoji { get; private set; }
         public IDictionary<ulong, ulong> GuildDestinationChannel { get; private set; }
         public IDictionary<ulong, ulong> GuildApplicationMessage { get; private set; }
+        public IDictionary<ulong, ulong> GuildRoleToMention { get; private set; }
 
         public const string communityApplicationFileName = "inactivity/comApplication.json";
 
@@ -41,6 +43,7 @@ namespace InactivityBot.Models
                     GuildEmoji = model.GuildEmoji;
                     GuildDestinationChannel = model.GuildDestinationChannel;
                     GuildApplicationMessage = model.GuildApplicationMessage;
+                    GuildRoleToMention = model.GuildRoleToMention;
                 }
             }
             else

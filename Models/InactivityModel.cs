@@ -19,6 +19,7 @@ namespace InactivityBot.Models
             GuildInactiveEmoji = new Dictionary<ulong, string>();
             GuildInactivityMessage = new Dictionary<ulong, ulong>();
             GuildRaidRoles = new Dictionary<ulong, List<ulong>>();
+            GuildMemberUpdateEvents = new Dictionary<ulong, bool>();
         }
 
         /// <summary>
@@ -58,6 +59,11 @@ namespace InactivityBot.Models
         public IDictionary<ulong, List<ulong>> GuildRaidRoles { get; private set; }
 
         /// <summary>
+        /// Gets a collection of bools which decide wether or not to listen to the GuildMemberUpdated event.
+        /// </summary>
+        public IDictionary<ulong, bool> GuildMemberUpdateEvents { get; private set; }
+
+        /// <summary>
         /// Field, storing the base file name for the json file.
         /// </summary>
         public const string inactivityFileName = "inactivity/inactivity.json";
@@ -88,6 +94,7 @@ namespace InactivityBot.Models
                     GuildInactivityRole = model.GuildInactivityRole;
                     GuildActiveEmoji = model.GuildActiveEmoji;
                     GuildRaidRoles = model.GuildRaidRoles;
+                    GuildMemberUpdateEvents = model.GuildMemberUpdateEvents;
                 }
             }
             else

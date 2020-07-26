@@ -6,8 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Discord.Net" Version="2.3.0-dev-20200425.1" />
-    <PackageReference Include="Discord.Net.Commands" Version="2.3.0-dev-20200425.1" />
+    <PackageReference Include="Discord.Net" Version="2.3.0-dev-20200718.1" />
+    <PackageReference Include="Discord.Net.Commands" Version="2.3.0-dev-20200718.1" />
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

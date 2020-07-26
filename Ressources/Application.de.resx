@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AccountName" xml:space="preserve">
-    <value>Dein Guild Wars2 Account Name</value>
+    <value>Bitte gib deinen Guild Wars 2-Accountnamen inklusive Ziffern ein:</value>
     <comment>Guild Wars 2 account name</comment>
   </data>
   <data name="AccountName_DiggitsMissing" xml:space="preserve">
@@ -126,7 +126,7 @@
     <comment>Please also specifiy the last 4 digits of your GW2 account name!</comment>
   </data>
   <data name="AccountName_Incorrect" xml:space="preserve">
-    <value>Dein Guild Wars 2 Account Name ist falsch. Bitte geb auch die letzten 4 Ziffern deines GW2 Account Namens an.</value>
+    <value>Dein Guild Wars 2 Accountname ist unvollständig. Gib bitte auch die 4 Ziffern des Namens an.</value>
     <comment>Your Guild Wars 2 account name is inccorect. Please make sure to also specify the last 4 Digits of your GW2 account name.</comment>
   </data>
   <data name="Embed_AccountName" xml:space="preserve">
@@ -134,11 +134,11 @@
     <comment>Account name</comment>
   </data>
   <data name="Embed_Found" xml:space="preserve">
-    <value>Wie bist du auf unsere Community gestoßen?</value>
+    <value>Warum möchtest du Mitglied von Rising Light werden und wie bist du auf unsere Community gestoßen?</value>
     <comment>How did you find the community?</comment>
   </data>
-  <data name="Embed_Reason" xml:space="preserve">
-    <value>Warum möchtest du bei uns Mitglied werden?</value>
+  <data name="Embed_SkillLevel" xml:space="preserve">
+    <value>Wie würdest du deine Raid-Erfahrung bewerten?</value>
     <comment>Why do you want to be a part of this community?</comment>
   </data>
   <data name="Embed_Title" xml:space="preserve">
@@ -161,8 +161,12 @@
     <value>Bewerbungs Emoji erfolgreich gesetzt.</value>
     <comment>Successfully set the Application emoji.</comment>
   </data>
+  <data name="Error" xml:space="preserve">
+    <value>Es tut mir leid aber es gab einen Fehler während des Bewerbungsprozesses. Bitte versuche es erneut in ein paar minuten und sollte dieser Fehler weiterhin auftreten, kontaktiere den Ersteller der Applikation {0}</value>
+    <comment>I'm sorry but there was an error during your application. Please try it again in a few minutes and if it keeps happening, contact the Author of this application {0}</comment>
+  </data>
   <data name="Found" xml:space="preserve">
-    <value>Wie bist du auf unsere Community gestoßen?</value>
+    <value>Warum möchtest du Mitglied von Rising Light werden und wie bist du auf unsere Community gestoßen?</value>
     <comment>How did you find the community?</comment>
   </data>
   <data name="GetChannel_NotFound" xml:space="preserve">
@@ -173,9 +177,13 @@
     <value>Der derzeitige Ziel-Channel ist: {0}</value>
     <comment>The current destination channel is: {0}</comment>
   </data>
-  <data name="Reason" xml:space="preserve">
-    <value>Warum möchtest du bei uns Mitglied werden?</value>
-    <comment>Why do you want to be a part of this community?</comment>
+  <data name="GetRole_NotFound" xml:space="preserve">
+    <value>Es konnte keine Rolle gefunden werden. Bitte vergewissere dich das eine Rolle gesetzt wurde und führe den Command '!bewerbung setRole [rolle]' aus, wobei [rolle] der Name oder der Ping der Rolle ist.</value>
+    <comment>Could not find a role. Please make sure that one was set by calling the command 'application setRole [role]' where [role] is the name, or reference of the role.</comment>
+  </data>
+  <data name="GetRole_Success" xml:space="preserve">
+    <value>Die Rolle die gepingt wird ist: {0}</value>
+    <comment>The Role to mention is: {0}</comment>
   </data>
   <data name="SetChannel_NoChannel" xml:space="preserve">
     <value>Bitte gebe einen Channel an in dem du diesen mit einem # referenzierst z.B. #inaktiv</value>
@@ -185,16 +193,34 @@
     <value>Ziel-Channel erfolgreich gesetzt!</value>
     <comment>Succesfully set the destination channel!</comment>
   </data>
+  <data name="SetRole_NoRole" xml:space="preserve">
+    <value>Bitte gib eine Rolle an indem du diese mit einem @ pingst oder den Namen ausschreibst.</value>
+    <comment>Please provide a role by mentioning it with an @ or by spelling it out.</comment>
+  </data>
+  <data name="SetRole_Success" xml:space="preserve">
+    <value>Die Rolle wurde erfolgreich gesetzt.</value>
+    <comment>Successfully set the role.</comment>
+  </data>
+  <data name="SkillLevel" xml:space="preserve">
+    <value>Wie würdest du deine Raid-Erfahrung bewerten?</value>
+    <comment>Why do you want to be a part of this community?</comment>
+  </data>
   <data name="Start_MissingChannel" xml:space="preserve">
     <value>Es wurde vor dem aufrufen dieses Commands, kein Ziel Channel festgelegt. Bitte lege einen fest, mit dem Command "bewerbung channel [channel]"</value>
     <comment>No destination channel was set, prior to calling this command. Please set one using the command "application channel [channel]"</comment>
   </data>
   <data name="Start_Reaction" xml:space="preserve">
-    <value>Bitte reagiere mit {0} um dich für die Community zu bewerben.</value>
+    <value>Willkommen Fremder!
+Wir freuen uns, dass du den Weg auf unseren Server gefunden hast. Alle Infos zu unserer Raid-Community findest du hier im Discord oder auf unserer Website [Rising Light](https://www.rising-light.de).
+
+Wenn du Mitglied werden möchtest, bewirb dich einfach indem du auf das Herz unter dieser Nachricht klickst.
+Der Bot wird dir dann eine PN mit weiteren Anweisungen schreiben. Du musst hierfür Privatnachrichten von Server-Mitgliedern erlauben. Falls du das noch nicht hast, findest du diese Option in den Einstellungen unter „Privatsphäre und Sicherheit“</value>
     <comment>To apply for this community, please react with {0}</comment>
   </data>
   <data name="Success" xml:space="preserve">
-    <value>Vielen dank für deine Bewerbung!</value>
+    <value>Vielen Dank für deine Bewerbung! Wir werden sie innerhalb der nächsten Tage bearbeiten und dir Rechte geben.
+
+In der Zwischenzeit kannst du dir schon einmal deinen Account bei [RaidOrga+](http://orga.rising-light.de/) anlegen. Bitte achte auch hier darauf, deinen Accountnamen richtig anzugeben.</value>
     <comment>Thank you for your application!</comment>
   </data>
   <data name="Timeout" xml:space="preserve">

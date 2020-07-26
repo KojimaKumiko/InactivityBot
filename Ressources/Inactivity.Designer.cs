@@ -151,6 +151,24 @@ namespace InactivityBot.Ressources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Starting to listen to the &quot;GuildMemberUpdated&quot; event..
+        /// </summary>
+        public static string GuildMemberUpdated_Start {
+            get {
+                return ResourceManager.GetString("GuildMemberUpdated_Start", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Stopped listening to the &quot;GuildMemberUpdated&quot; event..
+        /// </summary>
+        public static string GuildMemberUpdated_Stop {
+            get {
+                return ResourceManager.GetString("GuildMemberUpdated_Stop", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Thank you for answering the questions. Your Inactivity Report will now be proccessed by your Raid-Leaders or one of the moderators. Please be patient, as this proccess will take some time..
         /// </summary>
         public static string Inactive_Success {
@@ -259,6 +277,15 @@ namespace InactivityBot.Ressources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The raider {0} was set inactive by {1}.
+        /// </summary>
+        public static string Inactivity_Forced {
+            get {
+                return ResourceManager.GetString("Inactivity_Forced", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to React with {0} to be inactiv or {1} to be active again!.
         /// </summary>
         public static string Inactivity_Message {
@@ -318,6 +345,15 @@ namespace InactivityBot.Ressources {
         public static string Inactivity_Role {
             get {
                 return ResourceManager.GetString("Inactivity_Role", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Inactivity Role already added..
+        /// </summary>
+        public static string InactivityRole_Added {
+            get {
+                return ResourceManager.GetString("InactivityRole_Added", resourceCulture);
             }
         }
         

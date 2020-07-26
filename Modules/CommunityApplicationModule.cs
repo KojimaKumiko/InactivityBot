@@ -24,13 +24,15 @@ namespace InactivityBot.Modules
         public LoggingService LoggingService { get; set; }
 
         [Command("start")]
-        [Description("Command which spawns in a message to which can be reacted for applications.")]
+        [Summary("Command which spawns in a message to which can be reacted for applications.")]
         public async Task ApplicationAsync()
         {
             await Context.Channel.TriggerTypingAsync();
 
             ulong guildId = Context.Guild.Id;
             CultureInfo culture = BaseService.GetGuildCulture(guildId);
+
+            await Context.Message.DeleteAsync();
 
             Model.GuildDestinationChannel.TryGetValue(guildId, out ulong channelId);
 
@@ -47,7 +49,10 @@ namespace InactivityBot.Modules
                 Model.GuildEmoji.Add(guildId, emote);
             }
 
-            var message = await ReplyAsync(string.Format(culture, Application.Start_Reaction, emote));
+            var embedBuilder = new EmbedBuilder();
+            embedBuilder.WithDescription(Application.Start_Reaction);
+            
+            var message = await ReplyAsync(embed: embedBuilder.Build());
             await message.AddReactionAsync(new Emoji(emote));
 
             if (Model.GuildApplicationMessage.ContainsKey(guildId))
@@ -65,7 +70,7 @@ namespace InactivityBot.Modules
 
         [Command("cancel")]
         [Alias("stop")]
-        [Description("Command which deletes the message and cancels/ends the awaiting of reactions for applications")]
+        [Summary("Command which deletes the message and cancels/ends the awaiting of reactions for applications")]
         public async Task CancelApplicationAsync()
         {
             await Context.Channel.TriggerTypingAsync();
@@ -108,7 +113,7 @@ namespace InactivityBot.Modules
 
         [Command("emote")]
         [Alias("setEmote")]
-        [Description("Sets the emote to use for the reaction.")]
+        [Summary("Sets the emote to use for the reaction.")]
         public async Task SetEmoteAsync(string emoji)
         {
             ulong guildId = Context.Guild.Id;
@@ -144,7 +149,7 @@ namespace InactivityBot.Modules
 
         [Command("emote")]
         [Alias("getEmote")]
-        [Description("Gets the emote that is currently used for the application reaction.")]
+        [Summary("Gets the emote that is currently used for the application reaction.")]
         public async Task GetEmoteAsync()
         {
             ulong guildId = Context.Guild.Id;
@@ -165,7 +170,7 @@ namespace InactivityBot.Modules
 
         [Command("channel")]
         [Alias("setChannel")]
-        [Description("Sets the destination channel where the bot will post the summary of the Application.")]
+        [Summary("Sets the destination channel where the bot will post the summary of the Application.")]
         public async Task SetDestinationChannelAsync(ITextChannel channel)
         {
             ulong guildId = Context.Guild.Id;
@@ -195,7 +200,7 @@ namespace InactivityBot.Modules
 
         [Command("channel")]
         [Alias("getChannel")]
-        [Description("Gets the destination channel where the bot will post the summary of the Application.")]
+        [Summary("Gets the destination channel where the bot will post the summary of the Application.")]
         public async Task GetDestinationChannel()
         {
             ulong guildId = Context.Guild.Id;
@@ -218,6 +223,64 @@ namespace InactivityBot.Modules
             else
             {
                 await ReplyAsync(string.Format(culture, Application.GetChannel_Success, channel.Name));
+            }
+        }
+
+        [Command("setRole")]
+        [Alias("role")]
+        [Summary("Sets the role to mention when a new community application gets send.")]
+        public async Task SetRoleToMention(IRole role)
+        {
+            ulong guildId = Context.Guild.Id;
+            CultureInfo culture = BaseService.GetGuildCulture(guildId);
+            await Context.Channel.TriggerTypingAsync();
+
+            if (role == null)
+            {
+                await ReplyAsync(Application.SetRole_NoRole);
+                return;
+            }
+
+            if (Model.GuildRoleToMention.ContainsKey(guildId))
+            {
+                Model.GuildRoleToMention[guildId] = role.Id;
+            }
+            else
+            {
+                Model.GuildRoleToMention.Add(guildId, role.Id);
+            }
+
+            await Model.SaveJsonAsync(CommunityApplicationModel.communityApplicationFileName);
+
+            await ReplyAsync(Application.SetRole_Success);
+            return;
+        }
+
+        [Command("getRole")]
+        [Alias("role")]
+        [Summary("Gets the role that gets mentioned when a new community application got send.")]
+        public async Task GetRoleToMention()
+        {
+            ulong guildId = Context.Guild.Id;
+            CultureInfo culture = BaseService.GetGuildCulture(guildId);
+            await Context.Channel.TriggerTypingAsync();
+
+            if (!Model.GuildRoleToMention.ContainsKey(guildId))
+            {
+                await ReplyAsync(Application.SetChannel_NoChannel);
+                return;
+            }
+
+            ulong roleId = Model.GuildRoleToMention[guildId];
+            var role = Context.Guild.GetRole(roleId);
+
+            if (role == null)
+            {
+                await ReplyAsync(Application.GetRole_NotFound);
+            }
+            else
+            {
+                await ReplyAsync(string.Format(culture, Application.GetRole_Success, role.Name));
             }
         }
     }

@@ -55,7 +55,8 @@ namespace InactivityBot.Modules
 
         [Command("Help")]
         [Summary("Returns information about all executable commands.")]
-        public async Task Help(string commandName)
+        [Priority(1)]
+        public async Task Help([Remainder] string commandName)
         {
             var executableCommands = await CommandService.GetExecutableCommandsAsync(Context, Services);
 
@@ -65,7 +66,7 @@ namespace InactivityBot.Modules
             {
                 var embedBuilder = new EmbedBuilder
                 {
-                    Title = "Help!",
+                    Title = commands.First().Name,
                     Timestamp = DateTime.Now,
                     Color = Color.Blue
                 };
@@ -74,7 +75,7 @@ namespace InactivityBot.Modules
                 embedBuilder.WithAuthor(applicationInfo.Owner);
 
                 embedBuilder
-                    .WithDescription($"`{commands.First().Name}`: {commands.First().Summary}")
+                    .WithDescription($"{commands.First().Summary}")
                     .AddField("Aliases", string.Join(", ", commands.First().Aliases));
 
                 foreach (var command in commands)
@@ -199,6 +200,59 @@ namespace InactivityBot.Modules
             }
 
             await ReplyAsync(embed: embedBuilder.Build());
+        }
+
+        [Command("messageTimer")]
+        [Alias("timer")]
+        [Summary("Sets the amount of time the user has, before the Bot stops responding, when awaiting an answer/message")]
+        public async Task MessageTimer([Summary("The amount of time.")] int amount, [Summary("The time format. Possible are 's' for seconds, 'm' for minutes and 'h' for hours. Defaults to minutes.")] char timeFormat = 'm')
+        {
+            ulong guildId = Context.Guild.Id;
+
+            if (amount <= 0)
+            {
+                await ReplyAsync("The amount of time has to be greater than 0");
+                return;
+            }
+
+            TimeSpan? waitTime = null;
+            switch (timeFormat)
+            {
+                case 's':
+                    waitTime = TimeSpan.FromSeconds(amount);
+                    break;
+                case 'm':
+                    waitTime = TimeSpan.FromMinutes(amount);
+                    break;
+                case 'h':
+                    waitTime = TimeSpan.FromHours(amount);
+                    break;
+            }
+
+            if (waitTime == null)
+            {
+                await ReplyAsync("The specified time format is not valid and/or is not supported");
+                return;
+            }
+
+            if (waitTime < TimeSpan.FromMinutes(5))
+            {
+                await ReplyAsync("The wait time has to be greater than 5 Minutes.");
+                return;
+            }
+
+            if (BaseModel.GuildWaitTime.ContainsKey(guildId))
+            {
+                BaseModel.GuildWaitTime[guildId] = waitTime.Value;
+            }
+            else
+            {
+                BaseModel.GuildWaitTime.Add(guildId, waitTime.Value);
+            }
+
+            await BaseModel.SaveJsonAsync(BaseModel.baseFileName);
+
+            await ReplyAsync($"The new time is now: {waitTime.Value}");
         }
 
         [Command("Directories")]

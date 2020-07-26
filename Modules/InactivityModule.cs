@@ -80,7 +80,7 @@ namespace InactivityBot
             }
 
             await InactivityModel.SaveJsonAsync(InactivityModel.inactivityFileName);
-            InactivityService.SetupInactivity(guildId);
+            InactivityService.SetupInactivityReaction(guildId);
 
             return;
         }
@@ -194,7 +194,7 @@ namespace InactivityBot
 
             ulong guildId = Context.Guild.Id;
 
-            InactivityService.CancelInactivity(guildId);
+            InactivityService.CancelInactivityReaction(guildId);
 
             InactivityModel.GuildInactivityMessage.TryGetValue(guildId, out ulong messageId);
             InactivityModel.GuildInactivityMessage.Remove(guildId);
@@ -520,6 +520,67 @@ namespace InactivityBot
             await InactivityModel.SaveJsonAsync(InactivityModel.inactivityFileName);
 
             await ReplyAsync(Inactivity.RemoveRaid_Success);
+        }
+
+        [Command("startGuildMemberUpdateEvent")]
+        [Alias("guildUpdate", "guildUserUpdate", "memberUpdate", "guildMemberUpdate", "userUpdateEvent", "startUpdateEvent")]
+        [Description("Command to let the bot start listening to role changes and react when the inactivity role got set.")]
+        public async Task StartGuildMemberUpdateEvents()
+        {
+            await Context.Channel.TriggerTypingAsync();
+
+            ulong guildId = Context.Guild.Id;
+            BaseService.GetGuildCulture(guildId);
+
+            if (!InactivityModel.GuildInactivityRole.ContainsKey(guildId))
+            {
+                await ReplyAsync(Inactivity.Inactivity_MissingRole);
+                return;
+            }
+
+            if (!InactivityModel.GuildDestinationChannel.ContainsKey(guildId))
+            {
+                await ReplyAsync(Inactivity.Inactivity_MissingChannel);
+                return;
+            }
+
+            if (InactivityModel.GuildMemberUpdateEvents.ContainsKey(guildId))
+            {
+                InactivityModel.GuildMemberUpdateEvents[guildId] = true;
+            }
+            else
+            {
+                InactivityModel.GuildMemberUpdateEvents.Add(guildId, true);
+            }
+
+            await InactivityModel.SaveJsonAsync(InactivityModel.inactivityFileName);
+
+            InactivityService.SetupGuildMemberUpdated(guildId);
+
+            await ReplyAsync(Inactivity.GuildMemberUpdated_Start);
+            return;
+        }
+
+        [Command("stopGuildMemberUpdateEvent")]
+        [Alias("stopUpdateEvent", "stopMemberUpdate", "stopGuildUpdate")]
+        public async Task StipGuildMemberUpdateEvent()
+        {
+            await Context.Channel.TriggerTypingAsync();
+
+            ulong guildId = Context.Guild.Id;
+            BaseService.GetGuildCulture(guildId);
+
+            if (InactivityModel.GuildMemberUpdateEvents.ContainsKey(guildId))
+            {
+                InactivityModel.GuildMemberUpdateEvents[guildId] = false;
+            }
+
+            await InactivityModel.SaveJsonAsync(InactivityModel.inactivityFileName);
+
+            InactivityService.RemoveGuildMemberUpdated(guildId);
+
+            await ReplyAsync(Inactivity.GuildMemberUpdated_Stop);
+            return;
         }
 
         private Task NotImplemented() => ReplyAsync("I'm vewwy sowwy but this command is currently not yet implemented :c");

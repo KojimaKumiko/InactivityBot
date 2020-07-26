@@ -87,14 +87,19 @@ namespace InactivityBot
         {
             Logger.Information("Client Ready event fired.");
 
-            foreach (var guild in inactivityService.Model.GuildInactivityMessage.Keys)
+            foreach (var guildId in inactivityService.Model.GuildInactivityMessage.Keys)
             {
-                inactivityService.SetupInactivity(guild);
+                inactivityService.SetupInactivityReaction(guildId);
             }
 
-            foreach (var guild in communityApplicationService.Model.GuildApplicationMessage.Keys)
+            foreach (var guildId in inactivityService.Model.GuildMemberUpdateEvents.Keys)
             {
-                communityApplicationService.SetupApplications(guild);
+                inactivityService.SetupGuildMemberUpdated(guildId);
+            }
+
+            foreach (var guildId in communityApplicationService.Model.GuildApplicationMessage.Keys)
+            {
+                communityApplicationService.SetupApplications(guildId);
             }
 
             return Task.CompletedTask;

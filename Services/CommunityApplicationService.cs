@@ -6,7 +6,6 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -42,7 +41,7 @@ namespace InactivityBot.Services
         {
             if (!ReactionAddedPointers.ContainsKey(guildId))
             {
-                Logger.Debug($"Setup inactivity reactions for guild {guildId}");
+                Logger.Debug($"Setup application reactions for guild {guildId}");
                 Task Func(Cacheable<IUserMessage, ulong> cachedMessage, ISocketMessageChannel channel, SocketReaction reaction) => ReactionAdded(cachedMessage, channel, reaction, guildId);
                 ReactionAddedPointers.Add(guildId, Func);
                 Client.ReactionAdded += Func;
@@ -55,7 +54,7 @@ namespace InactivityBot.Services
             {
                 Client.ReactionAdded -= ReactionAddedPointers[guildId];
                 ReactionAddedPointers.Remove(guildId);
-                Logger.Debug($"Canceled inactivity reactions for guild {guildId}");
+                Logger.Debug($"Canceled application reactions for guild {guildId}");
             }
         }
 
@@ -64,6 +63,13 @@ namespace InactivityBot.Services
             Logger.Debug("Reaction added");
 
             CultureInfo culture = BaseService.GetGuildCulture(guildId);
+            BaseService.Model.GuildWaitTime.TryGetValue(guildId, out TimeSpan waitTime);
+
+            if (waitTime == null)
+            {
+                // in case the guild did not set a custom wait time, set a default one with 15 Minutes.
+                waitTime = new TimeSpan(0, 15, 0);
+            }
 
             // Get the message where the reaction was added.
             var message = await cachedMessage.GetOrDownloadAsync();
@@ -75,100 +81,169 @@ namespace InactivityBot.Services
                 // Check if the user object is set and if the user is not a bot.
                 if (user != null && !user.IsBot)
                 {
-                    if (OngoingUsers.Contains(user.Id))
-                    {
-                        Logger.Debug($"User with Id {user.Id} reacted to the message again too soon.");
-                        await message.RemoveReactionAsync(reaction.Emote, user).ConfigureAwait(false);
-                        return;
-                    }
-
-                    OngoingUsers.Add(user.Id);
+                    Logger.Information($"User {user.Username} ({user.Id}) is applying for the community.");
 
                     // Check if the reaction was added to the inactivity message.
                     Model.GuildApplicationMessage.TryGetValue(guildId, out var messageId);
                     if (messageId > 0 && message.Id == messageId)
                     {
+                        if (OngoingUsers.Contains(user.Id))
+                        {
+                            Logger.Debug($"User {user.Username} with Id {user.Id} reacted to the message again too soon.");
+                            await message.RemoveReactionAsync(reaction.Emote, user).ConfigureAwait(false);
+                            return;
+                        }
+
+                        OngoingUsers.Add(user.Id);
+
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                         Task.Run(async () =>
                         {
-                            var emoji = new Emoji(reaction.Emote.Name);
+                            var applicationInfo = await Client.GetApplicationInfoAsync();
 
-                            await message.RemoveReactionAsync(reaction.Emote, user).ConfigureAwait(false);
-
-                            Model.GuildEmoji.TryGetValue(guildId, out var applicationEmoji);
-
-                            var guildUser = user as IGuildUser;
-
-                            if (emoji.Name == applicationEmoji)
+                            try
                             {
-                                var dmChannel = await user.GetOrCreateDMChannelAsync().ConfigureAwait(false);
+                                var emoji = new Emoji(reaction.Emote.Name);
 
-                                SocketMessage accountName = null;
-                                await dmChannel.SendMessageAsync(Application.AccountName);
-                                bool regexMatch = false;
+                                await message.RemoveReactionAsync(reaction.Emote, user).ConfigureAwait(false);
 
-                                do
+                                Model.GuildEmoji.TryGetValue(guildId, out var applicationEmoji);
+
+                                var guildUser = user as IGuildUser;
+
+                                if (emoji.Name == applicationEmoji)
                                 {
-                                    if (accountName != null)
+                                    var dmChannel = await user.GetOrCreateDMChannelAsync().ConfigureAwait(false);
+
+                                    SocketMessage accountName = null;
+                                    await dmChannel.SendMessageAsync(Application.AccountName);
+                                    bool regexMatch = false;
+
+                                    do
                                     {
-                                        await dmChannel.SendMessageAsync(Application.AccountName_Incorrect);
+                                        if (accountName != null)
+                                        {
+                                            await dmChannel.SendMessageAsync(Application.AccountName_Incorrect);
+                                            Logger.Information($"User {user.Username} provided an incorrect account name");
+                                        }
+
+                                        accountName = await HelperMethods.GetNextMessage(Client, user, waitTime).ConfigureAwait(false);
+
+                                        if (accountName != null)
+                                        {
+                                            regexMatch = Regex.IsMatch(accountName.Content, @"[a-zA-Z]+\.\d{4}$");
+                                        }
+                                    }
+                                    while (accountName != null && !regexMatch);
+
+                                    if (accountName == null)
+                                    {
+                                        await dmChannel.SendMessageAsync(Application.Timeout);
+                                        OngoingUsers.Remove(user.Id);
+                                        return;
                                     }
 
-                                    accountName = await HelperMethods.GetNextMessage(Client, user).ConfigureAwait(false);
+                                    Logger.Information($"Account Name: {accountName} from User: {user.Username}");
 
-                                    if (accountName != null)
+                                    await dmChannel.SendMessageAsync(Application.Found);
+                                    var communityFound = await HelperMethods.GetNextMessage(Client, user, waitTime).ConfigureAwait(false);
+
+                                    if (communityFound == null)
                                     {
-                                        regexMatch = Regex.IsMatch(accountName.Content, @"[a-zA-Z]+\.\d{4}$");
+                                        await dmChannel.SendMessageAsync(Application.Timeout);
+                                        OngoingUsers.Remove(user.Id);
+                                        return;
                                     }
-                                }
-                                while (accountName != null && !regexMatch);
 
-                                if (accountName == null)
-                                {
-                                    await dmChannel.SendMessageAsync(Application.Timeout);
-                                    OngoingUsers.Remove(user.Id);
-                                    return;
-                                }
+                                    Logger.Information($"Community Found: {communityFound} from User: {user.Username}");
 
-                                await dmChannel.SendMessageAsync(Application.Reason);
-                                var applicationReason = await HelperMethods.GetNextMessage(Client, user).ConfigureAwait(false);
+                                    await dmChannel.SendMessageAsync(Application.SkillLevel);
+                                    var applicationSkillLevel = await HelperMethods.GetNextMessage(Client, user, waitTime).ConfigureAwait(false);
 
-                                if (applicationReason == null)
-                                {
-                                    await dmChannel.SendMessageAsync(Application.Timeout);
-                                    OngoingUsers.Remove(user.Id);
-                                    return;
-                                }
+                                    if (applicationSkillLevel == null)
+                                    {
+                                        await dmChannel.SendMessageAsync(Application.Timeout);
+                                        OngoingUsers.Remove(user.Id);
+                                        return;
+                                    }
 
-                                await dmChannel.SendMessageAsync(Application.Found);
-                                var communityFound = await HelperMethods.GetNextMessage(Client, user).ConfigureAwait(false);
+                                    Logger.Information($"Skill Level: {applicationSkillLevel} from User: {user.Username}");
 
-                                Model.GuildDestinationChannel.TryGetValue(guildId, out var channelId);
-                                if (await guildUser.Guild.GetChannelAsync(channelId) is ITextChannel channel)
-                                {
-                                    await dmChannel.SendMessageAsync(Application.Success);
+                                    Model.GuildDestinationChannel.TryGetValue(guildId, out var channelId);
+                                    if (await guildUser.Guild.GetChannelAsync(channelId) is ITextChannel channel)
+                                    {
+                                        var successEmbed = new EmbedBuilder();
+                                        successEmbed.WithDescription(Application.Success);
 
-                                    var embedBuilder = new EmbedBuilder();
-                                    embedBuilder
-                                        .WithAuthor(user)
-                                        .AddField(Application.Embed_AccountName, accountName.Content)
-                                        .AddField(Application.Embed_Reason, applicationReason.Content)
-                                        .AddField(Application.Embed_Found, communityFound?.Content)
-                                        .WithTitle(Application.Embed_Title)
-                                        .WithColor(Color.LightGrey)
-                                        .WithCurrentTimestamp()
-                                        .WithDescription(user.Mention);
+                                        await dmChannel.SendMessageAsync(embed: successEmbed.Build());
 
-                                    await channel.SendMessageAsync(embed: embedBuilder.Build()).ConfigureAwait(false);
-                                }
-                                else
-                                {
-                                    var applicationInfo = await Client.GetApplicationInfoAsync();
-                                    await dmChannel.SendMessageAsync(string.Format(culture, Inactivity.Error, applicationInfo.Owner.Mention, InactivityError.MissingChannel));
+                                        string mention;
+                                        Model.GuildRoleToMention.TryGetValue(guildId, out ulong roleId);
+                                        if (user.Id != applicationInfo.Owner.Id && roleId > 0)
+                                        {
+                                            var role = guildUser.Guild.GetRole(roleId);
+                                            mention = role.Mention;
+                                        }
+                                        else
+                                        {
+                                            mention = applicationInfo.Owner.Mention;
+                                        }
+
+                                        var embedBuilder = new EmbedBuilder();
+                                        embedBuilder
+                                            .WithAuthor(user)
+                                            .AddField(Application.Embed_AccountName, accountName.Content)
+                                            .AddField(Application.Embed_Found, communityFound?.Content)
+                                            .AddField(Application.Embed_SkillLevel, applicationSkillLevel.Content)
+                                            .WithTitle(Application.Embed_Title)
+                                            .WithColor(Color.LightGrey)
+                                            .WithCurrentTimestamp()
+                                            .WithDescription(user.Mention);
+
+                                        var resultMsg = await channel.SendMessageAsync(text: mention, embed: embedBuilder.Build()).ConfigureAwait(false);
+
+                                        var emoteTrue = HelperMethods.GetGuildEmote(Client, "raid_true");
+                                        var emoteFalse = HelperMethods.GetGuildEmote(Client, "raid_false");
+
+                                        if (emoteTrue != null)
+                                        {
+                                            await resultMsg.AddReactionAsync(emoteTrue);
+                                        }
+                                        else
+                                        {
+                                            Logger.Debug($"Missing + Reaction/Emote");
+                                            await resultMsg.AddReactionAsync(new Emoji("\u2705")); // ✅
+                                        }
+
+                                        if (emoteFalse != null)
+                                        {
+                                            await resultMsg.AddReactionAsync(emoteFalse);
+                                        }
+                                        else
+                                        {
+                                            Logger.Debug($"Missing - Reaction/Emote");
+                                            await resultMsg.AddReactionAsync(new Emoji("\u274C")); // ❌
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Logger.Error("Missing the destination channel");
+                                        string message = string.Format(culture, Application.Error, applicationInfo.Owner.Mention);
+                                        await dmChannel.SendMessageAsync(message);
+                                        await applicationInfo.Owner.SendMessageAsync(message + "\n" + InactivityError.MissingChannel);
+                                    }
                                 }
                             }
-
-                            OngoingUsers.Remove(user.Id);
+                            catch (Exception ex)
+                            {
+                                Logger.Error(ex.ToString());
+                                await applicationInfo.Owner.SendMessageAsync($"Exception: {ex}\nMessage: {ex.Message}");
+                            }
+                            finally
+                            {
+                                Logger.Debug($"Released user {user.Username} ({user.Id})");
+                                OngoingUsers.Remove(user.Id);
+                            }
                         });
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                     }

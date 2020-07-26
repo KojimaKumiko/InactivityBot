@@ -132,7 +132,7 @@
   <data name="Embed_Found" xml:space="preserve">
     <value>How did you find the community?</value>
   </data>
-  <data name="Embed_Reason" xml:space="preserve">
+  <data name="Embed_SkillLevel" xml:space="preserve">
     <value>Why do you want to be a part of this community?</value>
   </data>
   <data name="Embed_Title" xml:space="preserve">
@@ -150,6 +150,9 @@
   <data name="Emote_Success" xml:space="preserve">
     <value>Successfully set the Application emoji.</value>
   </data>
+  <data name="Error" xml:space="preserve">
+    <value>I'm sorry but there was an error during your application. Please try it again in a few minutes and if it keeps happening, contact the Author of this application {0}</value>
+  </data>
   <data name="Found" xml:space="preserve">
     <value>How did you find the community?</value>
   </data>
@@ -159,8 +162,11 @@
   <data name="GetChannel_Success" xml:space="preserve">
     <value>The current destination channel is: {0}</value>
   </data>
-  <data name="Reason" xml:space="preserve">
-    <value>Why do you want to be a part of this community?</value>
+  <data name="GetRole_NotFound" xml:space="preserve">
+    <value>Could not find a role. Please make sure that one was set by calling the command 'application setRole [role]' where [role] is the name, or reference of the role.</value>
+  </data>
+  <data name="GetRole_Success" xml:space="preserve">
+    <value>The Role to mention is: {0}</value>
   </data>
   <data name="SetChannel_NoChannel" xml:space="preserve">
     <value>Please provide a channel by referencing it with # and the channel name. e.g. #inactivity</value>
@@ -168,11 +174,20 @@
   <data name="SetChannel_Success" xml:space="preserve">
     <value>Succesfully set the destination channel!</value>
   </data>
+  <data name="SetRole_NoRole" xml:space="preserve">
+    <value>Please provide a role by mentioning it with an @ or by spelling it out.</value>
+  </data>
+  <data name="SetRole_Success" xml:space="preserve">
+    <value>Successfully set the role.</value>
+  </data>
+  <data name="SkillLevel" xml:space="preserve">
+    <value>Why do you want to be a part of this community?</value>
+  </data>
   <data name="Start_MissingChannel" xml:space="preserve">
     <value>No destination channel was set, prior to calling this command. Please set one using the command "application channel [channel]"</value>
   </data>
   <data name="Start_Reaction" xml:space="preserve">
-    <value>To apply for this community, please react with {0}</value>
+    <value>To apply for this community, please react with the heart emote.</value>
   </data>
   <data name="Success" xml:space="preserve">
     <value>Thank you for your application!</value>

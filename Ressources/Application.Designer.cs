@@ -108,9 +108,9 @@ namespace InactivityBot.Ressources {
         /// <summary>
         ///   Looks up a localized string similar to Why do you want to be a part of this community?.
         /// </summary>
-        internal static string Embed_Reason {
+        internal static string Embed_SkillLevel {
             get {
-                return ResourceManager.GetString("Embed_Reason", resourceCulture);
+                return ResourceManager.GetString("Embed_SkillLevel", resourceCulture);
             }
         }
         
@@ -160,6 +160,15 @@ namespace InactivityBot.Ressources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to I&apos;m sorry but there was an error during your application. Please try it again in a few minutes and if it keeps happening, contact the Author of this application {0}.
+        /// </summary>
+        internal static string Error {
+            get {
+                return ResourceManager.GetString("Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to How did you find the community?.
         /// </summary>
         internal static string Found {
@@ -187,11 +196,20 @@ namespace InactivityBot.Ressources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Why do you want to be a part of this community?.
+        ///   Looks up a localized string similar to Could not find a role. Please make sure that one was set by calling the command &apos;application setRole [role]&apos; where [role] is the name, or reference of the role..
         /// </summary>
-        internal static string Reason {
+        internal static string GetRole_NotFound {
             get {
-                return ResourceManager.GetString("Reason", resourceCulture);
+                return ResourceManager.GetString("GetRole_NotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Role to mention is: {0}.
+        /// </summary>
+        internal static string GetRole_Success {
+            get {
+                return ResourceManager.GetString("GetRole_Success", resourceCulture);
             }
         }
         
@@ -214,6 +232,33 @@ namespace InactivityBot.Ressources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Please provide a role by mentioning it with an @ or by spelling it out..
+        /// </summary>
+        internal static string SetRole_NoRole {
+            get {
+                return ResourceManager.GetString("SetRole_NoRole", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Successfully set the role..
+        /// </summary>
+        internal static string SetRole_Success {
+            get {
+                return ResourceManager.GetString("SetRole_Success", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Why do you want to be a part of this community?.
+        /// </summary>
+        internal static string SkillLevel {
+            get {
+                return ResourceManager.GetString("SkillLevel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No destination channel was set, prior to calling this command. Please set one using the command &quot;application channel [channel]&quot;.
         /// </summary>
         internal static string Start_MissingChannel {
@@ -223,7 +268,7 @@ namespace InactivityBot.Ressources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to To apply for this community, please react with {0}.
+        ///   Looks up a localized string similar to To apply for this community, please react with the heart emote..
         /// </summary>
         internal static string Start_Reaction {
             get {

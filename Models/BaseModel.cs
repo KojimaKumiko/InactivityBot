@@ -15,6 +15,7 @@ namespace InactivityBot.Models
         {
             GuildCulture = new Dictionary<ulong, CultureInfo>();
             UserCulture = new Dictionary<ulong, CultureInfo>();
+            GuildWaitTime = new Dictionary<ulong, TimeSpan>();
         }
 
         /// <summary>
@@ -25,6 +26,9 @@ namespace InactivityBot.Models
 
         [JsonProperty]
         public IDictionary<ulong, CultureInfo> UserCulture { get; private set; }
+
+        [JsonProperty]
+        public IDictionary<ulong, TimeSpan> GuildWaitTime { get; private set; }
 
         [JsonIgnore]
         public const string baseFileName = "inactivity/baseService.json";
@@ -46,6 +50,7 @@ namespace InactivityBot.Models
                 {
                     GuildCulture = model.GuildCulture;
                     UserCulture = model.UserCulture;
+                    GuildWaitTime = model.GuildWaitTime;
                 }
             }
             else
