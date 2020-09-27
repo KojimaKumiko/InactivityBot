@@ -162,7 +162,7 @@
     <comment>Stopped listening to the "GuildMemberUpdated" event.</comment>
   </data>
   <data name="Inactive_Success" xml:space="preserve">
-    <value>Vielen Dank für das Beantworten der Fragen. Deine Inaktivitätsmeldung wird nun von deiner Raid-Leitung oder einen der Moderatoren/Moderatorinnen bearbeitet. Wir bitten dich um Geduld, da dieser Prozess etwas Zeit in Anspruch nehmen wird.</value>
+    <value>Vielen Dank für das Beantworten der Fragen. Dir wurde nun automatisch die Inaktivitäts-Rolle hinzugefügt und die Raidleitung wurde darüber Informiert.</value>
     <comment>Thank you for answering the questions. Your Inactivity Report will now be proccessed by your Raid-Leaders or one of the moderators. Please be patient, as this proccess will take some time.</comment>
   </data>
   <data name="InactivityRole_Added" xml:space="preserve">

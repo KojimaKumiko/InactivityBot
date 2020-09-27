@@ -104,186 +104,193 @@ namespace InactivityBot.Services
 
             // Get the message where the reaction was added.
             var message = await cachedMessage.GetOrDownloadAsync();
-            if (message != null)
+            if (message == null)
             {
-                // Get the user.
-                IUser user = reaction.User.Value;
+                Logger.Error("Could not find the cached message");
+            }
 
-                // Check if the user object is set and if the user is not a bot.
-                if (user != null && !user.IsBot)
+            // Get the user.
+            IUser user = reaction.User.Value;
+
+            // If the User object is not set or a bot reacted to the message, don't do anything and just return.
+            if (user == null || user.IsBot)
+            {
+                string warningMessage = user == null ? "The user object was not set" : $"The bot {user.Username} reacted to the message";
+                Logger.Warning(warningMessage);
+                return;
+            }
+
+            // Check if the reaction was added to the inactivity message.
+            Model.GuildInactivityMessage.TryGetValue(guildId, out var messageId);
+            if (messageId > 0 && message.Id == messageId)
+            {
+                if (OngoingUsers.Contains(user.Id))
                 {
-                    // Check if the reaction was added to the inactivity message.
-                    Model.GuildInactivityMessage.TryGetValue(guildId, out var messageId);
-                    if (messageId > 0 && message.Id == messageId)
-                    {
-                        if (OngoingUsers.Contains(user.Id))
-                        {
-                            Logger.Debug($"User with Id {user.Id} reacted to the message again too soon.");
-                            await message.RemoveReactionAsync(reaction.Emote, user).ConfigureAwait(false);
-                            return;
-                        }
+                    Logger.Information($"User with Id {user.Id} reacted to the message again too soon.");
+                    await message.RemoveReactionAsync(reaction.Emote, user).ConfigureAwait(false);
+                    return;
+                }
 
-                        OngoingUsers.Add(user.Id);
+                Logger.Debug($"The user {user.Username} wants to set themself inactive.");
+
+                OngoingUsers.Add(user.Id);
 
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-                        Task.Run(async () =>
+                Task.Run(async () =>
+                {
+                    var applicationInfo = await Client.GetApplicationInfoAsync();
+
+                    try
+                    {
+                        var emoji = new Emoji(reaction.Emote.Name);
+
+                        await message.RemoveReactionAsync(reaction.Emote, user).ConfigureAwait(false);
+
+                        Model.GuildInactiveEmoji.TryGetValue(guildId, out var inactiveEmoji);
+                        Model.GuildActiveEmoji.TryGetValue(guildId, out var activeEmoji);
+                        Model.GuildInactivityRole.TryGetValue(guildId, out var inacRoleId);
+                        Model.GuildDestinationChannel.TryGetValue(guildId, out var destChannelId);
+
+                        var guildUser = user as IGuildUser;
+
+                        if (emoji.Name == inactiveEmoji)
                         {
-                            var applicationInfo = await Client.GetApplicationInfoAsync();
+                            var dmChannel = await user.GetOrCreateDMChannelAsync().ConfigureAwait(false);
 
-                            try
+                            SocketMessage accountName = null;
+                            await dmChannel.SendMessageAsync(Inactivity.Inactivity_AccountName);
+                            bool regexMatch = false;
+
+                            do
                             {
-                                var emoji = new Emoji(reaction.Emote.Name);
-
-                                await message.RemoveReactionAsync(reaction.Emote, user).ConfigureAwait(false);
-
-                                Model.GuildInactiveEmoji.TryGetValue(guildId, out var inactiveEmoji);
-                                Model.GuildActiveEmoji.TryGetValue(guildId, out var activeEmoji);
-                                Model.GuildInactivityRole.TryGetValue(guildId, out var inacRoleId);
-                                Model.GuildDestinationChannel.TryGetValue(guildId, out var destChannelId);
-
-                                var guildUser = user as IGuildUser;
-
-                                if (emoji.Name == inactiveEmoji)
+                                if (accountName != null)
                                 {
-                                    var dmChannel = await user.GetOrCreateDMChannelAsync().ConfigureAwait(false);
-
-                                    SocketMessage accountName = null;
-                                    await dmChannel.SendMessageAsync(Inactivity.Inactivity_AccountName);
-                                    bool regexMatch = false;
-
-                                    do
-                                    {
-                                        if (accountName != null)
-                                        {
-                                            await dmChannel.SendMessageAsync(Inactivity.AccountName_Incorrect);
-                                            Logger.Information($"The User {user.Username} provided an incorrect account name");
-                                        }
-
-                                        accountName = await HelperMethods.GetNextMessage(Client, user, waitTime).ConfigureAwait(false);
-
-                                        if (accountName != null)
-                                        {
-                                            regexMatch = Regex.IsMatch(accountName.Content, @"[a-zA-Z]+\.\d{4}$");
-                                        }
-                                    }
-                                    while (accountName != null && !regexMatch);
-
-                                    if (accountName == null)
-                                    {
-                                        await dmChannel.SendMessageAsync(Inactivity.Timeout);
-                                        OngoingUsers.Remove(user.Id);
-                                        Logger.Information($"User {user.Username} provided no account name");
-                                        return;
-                                    }
-
-                                    Logger.Information($"Account Name: {accountName} from User: {user.Username}");
-
-                                    await dmChannel.SendMessageAsync(Inactivity.Inactivity_Duration);
-                                    var inactivityPeriod = await HelperMethods.GetNextMessage(Client, user, waitTime).ConfigureAwait(false);
-
-                                    if (inactivityPeriod == null)
-                                    {
-                                        await dmChannel.SendMessageAsync(Inactivity.Timeout);
-                                        OngoingUsers.Remove(user.Id);
-                                        Logger.Information($"User {user.Username} provided no inactivity period");
-                                        return;
-                                    }
-
-                                    Logger.Information($"Inactivity Period: {inactivityPeriod} from User: {user.Username}");
-
-                                    await dmChannel.SendMessageAsync(Inactivity.Inactivity_Reason);
-                                    var reason = await HelperMethods.GetNextMessage(Client, user, waitTime).ConfigureAwait(false);
-
-                                    if (reason == null)
-                                    {
-                                        await dmChannel.SendMessageAsync(Inactivity.Missing_Reason);
-                                        OngoingUsers.Remove(user.Id);
-                                        Logger.Information($"User {user.Username} provided no reason");
-                                        return;
-                                    }
-
-                                    Logger.Information($"Reason: {reason} from User: {user.Username}");
-
-                                    List<string> raids = new List<string>();
-                                    Model.GuildRaidRoles.TryGetValue(guildId, out var guildRoles);
-                                    if (guildRoles != null)
-                                    {
-                                        var raidIds = guildUser.RoleIds.Where(r => guildRoles.Contains(r));
-                                        raids = guildUser.Guild.Roles.Where(r => raidIds.Contains(r.Id)).Select(r => r.Mention).ToList();
-                                    }
-
-                                    Model.GuildDestinationChannel.TryGetValue(guildId, out var channelId);
-                                    if (await guildUser.Guild.GetChannelAsync(channelId) is ITextChannel channel)
-                                    {
-                                        await dmChannel.SendMessageAsync(Inactivity.Inactive_Success);
-
-                                        var embedBuilder = new EmbedBuilder();
-                                        embedBuilder
-                                            .WithAuthor(user)
-                                            .AddField(Inactivity.Inactivity_Embed_AccountName, accountName.Content)
-                                            .AddField(Inactivity.Inactivity_Embed_Period, inactivityPeriod.Content)
-                                            .AddField(Inactivity.Inactivity_Embed_Reason, reason.Content)
-                                            .WithColor(Color.LightGrey)
-                                            .WithCurrentTimestamp()
-                                            .WithTitle(Inactivity.Inactivity_Embed_Title)
-                                            .WithDescription(user.Mention);
-
-                                        if (raids.Count > 0)
-                                        {
-                                            embedBuilder.AddField(Inactivity.Inactivity_Embed_Raids, string.Join(" ", raids));
-                                        }
-
-                                        if (inacRoleId > 0)
-                                        {
-                                            var inactivityRole = guildUser.Guild.Roles.Single(r => r.Id == inacRoleId);
-                                            if (inactivityRole != null)
-                                            {
-                                                await guildUser.AddRoleAsync(inactivityRole);
-                                                //embedBuilder.AddField(string.Empty, Inactivity.InactivityRole_Added);
-                                                embedBuilder.WithFooter(Inactivity.InactivityRole_Added);
-                                                Logger.Debug($"Added Role {inactivityRole} to User {user.Username}");
-                                            }
-                                        }
-                                        await channel.SendMessageAsync(text: string.Join(" ", raids), embed: embedBuilder.Build()).ConfigureAwait(false);
-
-                                        Logger.Debug("Successfully created the Inactivity Embed");
-                                    }
-                                    else
-                                    {
-                                        await dmChannel.SendMessageAsync(string.Format(culture, Inactivity.Error, applicationInfo.Owner.Mention, InactivityError.MissingChannel));
-                                    }
-                                }
-                                else if (emoji.Name == activeEmoji)
-                                {
-                                    if (inacRoleId > 0 && guildUser.RoleIds.Contains(inacRoleId))
-                                    {
-                                        var role = guildUser.Guild.Roles.Single(r => r.Id == inacRoleId);
-                                        await guildUser.RemoveRoleAsync(role).ConfigureAwait(false);
-                                        await guildUser.SendMessageAsync(Inactivity.Inactivity_Active).ConfigureAwait(false);
-
-                                        if (await guildUser.Guild.GetChannelAsync(destChannelId) is ITextChannel channel)
-                                        {
-                                            await channel.SendMessageAsync(string.Format(culture, Inactivity.Inactivity_Active_Lead, user.Mention)).ConfigureAwait(false);
-                                        }
-                                    }
+                                    await dmChannel.SendMessageAsync(Inactivity.AccountName_Incorrect);
+                                    Logger.Information($"The User {user.Username} provided an incorrect account name; The provided account name: {accountName}");
                                 }
 
-                                OngoingUsers.Remove(user.Id);
+                                accountName = await HelperMethods.GetNextMessage(Client, user, waitTime).ConfigureAwait(false);
+
+                                if (accountName != null)
+                                {
+                                    regexMatch = Regex.IsMatch(accountName.Content, @"[a-zA-Z]+\.\d{4}$");
+                                }
                             }
-                            catch (Exception ex)
+                            while (accountName != null && !regexMatch);
+
+                            if (accountName == null)
                             {
-                                Logger.Error(ex.ToString());
-                                await applicationInfo.Owner.SendMessageAsync($"Exception Message: {ex.Message}\nException: {ex}");
-                            }
-                            finally
-                            {
-                                Logger.Debug($"Released user {user.Username} ({user.Id})");
+                                await dmChannel.SendMessageAsync(Inactivity.Timeout);
                                 OngoingUsers.Remove(user.Id);
+                                Logger.Information($"User {user.Username} provided no account name");
+                                return;
                             }
-                        });
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+
+                            Logger.Information($"Account Name: {accountName} from User: {user.Username}");
+
+                            await dmChannel.SendMessageAsync(Inactivity.Inactivity_Duration);
+                            var inactivityPeriod = await HelperMethods.GetNextMessage(Client, user, waitTime).ConfigureAwait(false);
+
+                            if (inactivityPeriod == null)
+                            {
+                                await dmChannel.SendMessageAsync(Inactivity.Timeout);
+                                OngoingUsers.Remove(user.Id);
+                                Logger.Information($"User {user.Username} provided no inactivity period");
+                                return;
+                            }
+
+                            Logger.Information($"Inactivity Period: {inactivityPeriod} from User: {user.Username}");
+
+                            await dmChannel.SendMessageAsync(Inactivity.Inactivity_Reason);
+                            var reason = await HelperMethods.GetNextMessage(Client, user, waitTime).ConfigureAwait(false);
+
+                            if (reason == null)
+                            {
+                                await dmChannel.SendMessageAsync(Inactivity.Missing_Reason);
+                                OngoingUsers.Remove(user.Id);
+                                Logger.Information($"User {user.Username} provided no reason");
+                                return;
+                            }
+
+                            Logger.Information($"Reason: {reason} from User: {user.Username}");
+
+                            List<string> raids = new List<string>();
+                            Model.GuildRaidRoles.TryGetValue(guildId, out var guildRoles);
+                            if (guildRoles != null)
+                            {
+                                var raidIds = guildUser.RoleIds.Where(r => guildRoles.Contains(r));
+                                raids = guildUser.Guild.Roles.Where(r => raidIds.Contains(r.Id)).Select(r => r.Mention).ToList();
+                            }
+
+                            Model.GuildDestinationChannel.TryGetValue(guildId, out var channelId);
+                            if (await guildUser.Guild.GetChannelAsync(channelId) is ITextChannel channel)
+                            {
+                                await dmChannel.SendMessageAsync(Inactivity.Inactive_Success);
+
+                                var embedBuilder = new EmbedBuilder();
+                                embedBuilder
+                                    .WithAuthor(user)
+                                    .AddField(Inactivity.Inactivity_Embed_AccountName, accountName.Content)
+                                    .AddField(Inactivity.Inactivity_Embed_Period, inactivityPeriod.Content)
+                                    .AddField(Inactivity.Inactivity_Embed_Reason, reason.Content)
+                                    .WithColor(Color.LightGrey)
+                                    .WithCurrentTimestamp()
+                                    .WithTitle(Inactivity.Inactivity_Embed_Title)
+                                    .WithDescription(user.Mention);
+
+                                if (raids.Count > 0)
+                                {
+                                    embedBuilder.AddField(Inactivity.Inactivity_Embed_Raids, string.Join(" ", raids));
+                                }
+
+                                if (inacRoleId > 0)
+                                {
+                                    var inactivityRole = guildUser.Guild.Roles.Single(r => r.Id == inacRoleId);
+                                    if (inactivityRole != null)
+                                    {
+                                        await guildUser.AddRoleAsync(inactivityRole);
+                                        embedBuilder.WithFooter(Inactivity.InactivityRole_Added);
+                                        Logger.Debug($"Added Role {inactivityRole} to user {user.Username}");
+                                    }
+                                }
+                                await channel.SendMessageAsync(text: string.Join(" ", raids), embed: embedBuilder.Build()).ConfigureAwait(false);
+
+                                Logger.Debug("Successfully created the Inactivity Embed");
+                            }
+                            else
+                            {
+                                await dmChannel.SendMessageAsync(string.Format(culture, Inactivity.Error, applicationInfo.Owner.Mention, InactivityError.MissingChannel));
+                            }
+                        }
+                        else if (emoji.Name == activeEmoji)
+                        {
+                            if (inacRoleId > 0 && guildUser.RoleIds.Contains(inacRoleId))
+                            {
+                                var role = guildUser.Guild.Roles.Single(r => r.Id == inacRoleId);
+                                await guildUser.RemoveRoleAsync(role).ConfigureAwait(false);
+                                await guildUser.SendMessageAsync(Inactivity.Inactivity_Active).ConfigureAwait(false);
+
+                                if (await guildUser.Guild.GetChannelAsync(destChannelId) is ITextChannel channel)
+                                {
+                                    await channel.SendMessageAsync(string.Format(culture, Inactivity.Inactivity_Active_Lead, user.Mention)).ConfigureAwait(false);
+                                }
+                            }
+                        }
+
+                        OngoingUsers.Remove(user.Id);
                     }
-                }
+                    catch (Exception ex)
+                    {
+                        Logger.Error(ex.ToString());
+                        await applicationInfo.Owner.SendMessageAsync($"Exception Message: {ex.Message}\nException: {ex}");
+                    }
+                    finally
+                    {
+                        Logger.Debug($"Released user {user.Username} ({user.Id})");
+                        OngoingUsers.Remove(user.Id);
+                    }
+                });
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
             }
         }
 
